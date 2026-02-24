@@ -49,8 +49,13 @@ const Layout = ({ children }) => {
               >
                 {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
               </button>
-              <Link to="/" className="text-2xl font-bold text-primary">
-                Mimanasa
+              <Link to="/" className="flex items-center space-x-3">
+                <img 
+                  src="/logo.png" 
+                  alt="Mimanasa Logo" 
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <span className="text-2xl font-bold text-primary">Mimanasa</span>
               </Link>
             </div>
 

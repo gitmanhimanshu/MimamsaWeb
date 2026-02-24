@@ -34,6 +34,11 @@ const Login = () => {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
+          <img 
+            src="/logo.png" 
+            alt="Mimanasa Logo" 
+            className="w-24 h-24 mx-auto mb-4 rounded-full object-cover"
+          />
           <h1 className="text-4xl font-bold text-primary mb-2">Mimanasa</h1>
           <p className="text-gray-400">Digital Library</p>
         </div>
