@@ -87,8 +87,8 @@ const AddBookModal = ({ show, onClose, onSubmit, authors, categories, genres }) 
               className="w-full px-4 py-2 bg-darker border border-gray-700 rounded-lg text-white" />
             {form.content_url && <p className="text-green-400 text-sm mt-1">✓ File uploaded</p>}
           </div>
-          <input type="number" placeholder="Published Year" value={form.published_year} onChange={(e) => setForm({...form, published_year: e.target.value})}
-            className="w-full px-4 py-2 bg-darker border border-gray-700 rounded-lg text-white" />
+          <input type="number" placeholder="Published Year *" value={form.published_year} onChange={(e) => setForm({...form, published_year: e.target.value})}
+            className="w-full px-4 py-2 bg-darker border border-gray-700 rounded-lg text-white" required />
           <button type="submit" disabled={uploading}
             className="w-full bg-primary hover:bg-blue-600 text-white py-3 rounded-lg disabled:opacity-50">
             {uploading ? 'Uploading...' : 'Add Book'}
