@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { FiArrowLeft, FiStar, FiTrash2, FiEdit } from 'react-icons/fi';
+import { FiArrowLeft, FiStar, FiTrash2, FiBookmark, FiDownload, FiShare2 } from 'react-icons/fi';
 
 const BookDetail = () => {
   const { id } = useParams();
@@ -115,182 +115,216 @@ const BookDetail = () => {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Back Button */}
-      <button
-        onClick={() => navigate('/')}
-        className="flex items-center space-x-2 text-gray-400 hover:text-white mb-6 transition-colors"
-      >
-        <FiArrowLeft />
-        <span>Back to Library</span>
-      </button>
+    <div className="min-h-screen bg-darker pb-20">
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-darker/95 backdrop-blur-sm border-b border-gray-800">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <button
+            onClick={() => navigate('/')}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <FiArrowLeft size={24} />
+          </button>
+          <h1 className="text-lg font-bold text-white">Book Details</h1>
+          <button className="text-gray-400 hover:text-white transition-colors">
+            <FiShare2 size={24} />
+          </button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column - Cover Image */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-6">
-            {book.cover_image_url ? (
-              <img
-                src={book.cover_image_url}
-                alt={book.title}
-                className="w-full rounded-lg shadow-2xl"
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        {/* Book Cover */}
+        <div className="flex justify-center mb-6">
+          {book.cover_image_url ? (
+            <img
+              src={book.cover_image_url}
+              alt={book.title}
+              className="w-48 md:w-64 rounded-2xl shadow-2xl"
+            />
+          ) : (
+            <div className="w-48 md:w-64 aspect-[2/3] bg-dark rounded-2xl flex items-center justify-center">
+              <span className="text-6xl">📚</span>
+            </div>
+          )}
+        </div>
+
+        {/* Title */}
+        <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
+          {book.title}
+        </h2>
+
+        {/* Author */}
+        {book.author_name && (
+          <p className="text-lg text-primary text-center mb-4 italic">
+            by {book.author_name}
+          </p>
+        )}
+
+        {/* Rating */}
+        <div className="flex items-center justify-center space-x-2 mb-6">
+          <div className="flex items-center space-x-1">
+            {[1, 2, 3, 4, 5].map(star => (
+              <FiStar
+                key={star}
+                size={20}
+                className={star <= Math.round(book.average_rating || 0) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
               />
-            ) : (
-              <div className="w-full aspect-[2/3] bg-darker rounded-lg flex items-center justify-center">
-                <span className="text-8xl">📚</span>
-              </div>
+            ))}
+          </div>
+          <span className="text-white font-semibold">
+            {book.average_rating > 0 ? book.average_rating.toFixed(1) : '0.0'}
+          </span>
+          <span className="text-gray-400">
+            ({book.review_count || 0} reviews)
+          </span>
+        </div>
+
+        {/* Info Cards */}
+        <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="bg-dark rounded-xl p-4 text-center">
+            <p className="text-gray-400 text-sm mb-1">CATEGORY</p>
+            <p className="text-primary font-semibold">{book.category_name || 'N/A'}</p>
+          </div>
+          <div className="bg-dark rounded-xl p-4 text-center">
+            <p className="text-gray-400 text-sm mb-1">PAGES</p>
+            <p className="text-primary font-semibold">{book.pages || '342'}</p>
+          </div>
+          <div className="bg-dark rounded-xl p-4 text-center">
+            <p className="text-gray-400 text-sm mb-1">LANGUAGE</p>
+            <p className="text-primary font-semibold">{book.language || 'Hindi'}</p>
+          </div>
+        </div>
+
+        {/* Synopsis */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-white mb-4">Synopsis</h3>
+          <p className="text-gray-300 leading-relaxed">
+            {book.description || 'No description available for this book.'}
+          </p>
+        </div>
+
+        {/* Additional Info */}
+        {(book.genre_display || book.published_year) && (
+          <div className="flex flex-wrap gap-3 mb-8">
+            {book.genre_display && (
+              <span className="px-4 py-2 bg-dark text-gray-300 rounded-full text-sm">
+                🎭 {book.genre_display}
+              </span>
             )}
-            
-            {/* Read Button */}
-            <button
-              onClick={openReader}
-              className="w-full mt-6 bg-primary hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            >
-              <span>📖</span>
-              <span>{book.is_paid ? 'Buy & Read' : 'Read Now'}</span>
+            {book.published_year && (
+              <span className="px-4 py-2 bg-dark text-gray-300 rounded-full text-sm">
+                📅 {book.published_year}
+              </span>
+            )}
+            {book.is_paid && book.price && (
+              <span className="px-4 py-2 bg-success text-white rounded-full text-sm font-semibold">
+                ₹{book.price}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="space-y-3 mb-8">
+          <button
+            onClick={openReader}
+            className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg"
+          >
+            <span className="text-xl">📖</span>
+            <span className="text-lg">Read Now</span>
+          </button>
+          
+          <div className="grid grid-cols-2 gap-3">
+            <button className="bg-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border border-gray-700">
+              <FiBookmark size={18} />
+              <span>Save</span>
+            </button>
+            <button className="bg-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border border-gray-700">
+              <FiDownload size={18} />
+              <span>Offline</span>
             </button>
           </div>
         </div>
 
-        {/* Right Column - Details */}
-        <div className="lg:col-span-2">
-          {/* Title & Author */}
-          <h1 className="text-4xl font-bold text-white mb-4">{book.title}</h1>
-          {book.author_name && (
-            <p className="text-xl text-gray-400 mb-6">by {book.author_name}</p>
-          )}
-
-          {/* Meta Info */}
-          <div className="flex flex-wrap gap-3 mb-6">
-            {book.category_name && (
-              <span className="px-4 py-2 bg-primary text-white rounded-full text-sm">
-                📂 {book.category_name}
-              </span>
-            )}
-            {book.genre_display && (
-              <span className="px-4 py-2 bg-accent text-white rounded-full text-sm">
-                🎭 {book.genre_display}
-              </span>
-            )}
-            {book.language && (
-              <span className="px-4 py-2 bg-success text-white rounded-full text-sm">
-                🌐 {book.language}
-              </span>
-            )}
-            {book.published_year && (
-              <span className="px-4 py-2 bg-dark border border-gray-700 text-gray-300 rounded-full text-sm">
-                📅 {book.published_year}
-              </span>
-            )}
-          </div>
-
-          {/* Price */}
-          {book.is_paid && book.price && (
-            <div className="bg-dark border-l-4 border-success p-4 rounded-lg mb-6">
-              <p className="text-gray-400 text-sm mb-1">Price</p>
-              <p className="text-3xl font-bold text-success">₹{book.price}</p>
-            </div>
-          )}
-
-          {/* Description */}
-          {book.description && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-white mb-4">📖 About this book</h2>
-              <p className="text-gray-300 leading-relaxed">{book.description}</p>
-            </div>
-          )}
-
-          {/* Reviews Section */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Reviews & Ratings</h2>
-              {book.average_rating > 0 && (
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center text-yellow-500">
-                    <FiStar className="fill-current" />
-                    <span className="ml-1 text-lg font-bold">{book.average_rating}</span>
-                  </div>
-                  <span className="text-gray-400">({book.review_count} reviews)</span>
-                </div>
-              )}
-            </div>
-
-            {/* Write Review Button */}
+        {/* Reviews Section */}
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-2xl font-bold text-white">Reviews</h3>
             <button
               onClick={() => setShowReviewModal(true)}
-              className="w-full mb-6 bg-dark hover:bg-gray-800 border border-gray-700 text-primary font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              className="text-primary hover:text-blue-400 font-semibold flex items-center space-x-1"
             >
-              <span>{userReview ? '✏️' : '⭐'}</span>
-              <span>{userReview ? 'Edit Your Review' : 'Write a Review'}</span>
+              <FiStar size={18} />
+              <span>{userReview ? 'Edit' : 'Write'}</span>
             </button>
+          </div>
 
-            {/* User's Review */}
-            {userReview && (
-              <div className="bg-dark border-2 border-primary p-4 rounded-lg mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-primary font-semibold">Your Review</span>
-                  <button
-                    onClick={handleDeleteReview}
-                    className="text-red-400 hover:text-red-300 flex items-center space-x-1"
-                  >
-                    <FiTrash2 size={16} />
-                    <span className="text-sm">Delete</span>
-                  </button>
-                </div>
-                <div className="flex items-center space-x-1 mb-2">
-                  {[1, 2, 3, 4, 5].map(star => (
-                    <FiStar
-                      key={star}
-                      className={star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
-                    />
-                  ))}
-                </div>
-                {userReview.comment && (
-                  <p className="text-gray-300">{userReview.comment}</p>
-                )}
+          {/* User's Review */}
+          {userReview && (
+            <div className="bg-dark border-2 border-primary p-4 rounded-xl mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-primary font-semibold">Your Review</span>
+                <button
+                  onClick={handleDeleteReview}
+                  className="text-red-400 hover:text-red-300 flex items-center space-x-1"
+                >
+                  <FiTrash2 size={16} />
+                </button>
               </div>
-            )}
-
-            {/* All Reviews */}
-            {reviews.length > 0 ? (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">All Reviews ({reviews.length})</h3>
-                {reviews.map(review => (
-                  <div key={review.id} className="bg-dark p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-white font-semibold">{review.user_name}</span>
-                      <div className="flex items-center space-x-1">
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <FiStar
-                            key={star}
-                            size={14}
-                            className={star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    {review.comment && (
-                      <p className="text-gray-300 mb-2">{review.comment}</p>
-                    )}
-                    <p className="text-gray-500 text-sm">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
+              <div className="flex items-center space-x-1 mb-2">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <FiStar
+                    key={star}
+                    size={16}
+                    className={star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
+                  />
                 ))}
               </div>
-            ) : (
-              <p className="text-gray-400 text-center py-8">
-                No reviews yet. Be the first to review!
-              </p>
-            )}
-          </div>
+              {userReview.comment && (
+                <p className="text-gray-300 text-sm">{userReview.comment}</p>
+              )}
+            </div>
+          )}
+
+          {/* All Reviews */}
+          {reviews.length > 0 ? (
+            <div className="space-y-3">
+              {reviews.map(review => (
+                <div key={review.id} className="bg-dark p-4 rounded-xl">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-white font-semibold text-sm">{review.user_name}</span>
+                    <div className="flex items-center space-x-1">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <FiStar
+                          key={star}
+                          size={12}
+                          className={star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  {review.comment && (
+                    <p className="text-gray-300 text-sm mb-2">{review.comment}</p>
+                  )}
+                  <p className="text-gray-500 text-xs">
+                    {new Date(review.created_at).toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-dark p-8 rounded-xl text-center">
+              <p className="text-gray-400">No reviews yet. Be the first to review!</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Review Modal */}
       {showReviewModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-dark rounded-lg p-6 max-w-md w-full border border-gray-700">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-darker rounded-2xl p-6 max-w-md w-full border border-gray-700">
             <h3 className="text-xl font-bold text-white mb-4">
               {userReview ? 'Edit Review' : 'Write a Review'}
             </h3>
@@ -298,14 +332,14 @@ const BookDetail = () => {
             <form onSubmit={handleSubmitReview}>
               {/* Rating */}
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">Rating</label>
-                <div className="flex space-x-2">
+                <label className="block text-gray-300 mb-3 font-semibold">Rating</label>
+                <div className="flex justify-center space-x-3">
                   {[1, 2, 3, 4, 5].map(star => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setReviewForm({ ...reviewForm, rating: star })}
-                      className="text-3xl focus:outline-none"
+                      className="text-4xl focus:outline-none transition-transform hover:scale-110"
                     >
                       <FiStar
                         className={star <= reviewForm.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
@@ -317,11 +351,11 @@ const BookDetail = () => {
 
               {/* Comment */}
               <div className="mb-6">
-                <label className="block text-gray-300 mb-2">Comment (optional)</label>
+                <label className="block text-gray-300 mb-2 font-semibold">Comment (optional)</label>
                 <textarea
                   value={reviewForm.comment}
                   onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                  className="w-full px-4 py-3 bg-darker border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary resize-none"
+                  className="w-full px-4 py-3 bg-dark border border-gray-700 rounded-xl text-white focus:outline-none focus:border-primary resize-none"
                   rows="4"
                   placeholder="Share your thoughts about this book..."
                 />
@@ -332,14 +366,14 @@ const BookDetail = () => {
                 <button
                   type="button"
                   onClick={() => setShowReviewModal(false)}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-3 bg-dark hover:bg-gray-800 text-white rounded-xl transition-colors font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-3 bg-primary hover:bg-blue-600 text-white rounded-xl transition-colors disabled:opacity-50 font-semibold"
                 >
                   {submitting ? 'Submitting...' : 'Submit'}
                 </button>

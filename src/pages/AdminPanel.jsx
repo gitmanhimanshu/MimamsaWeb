@@ -148,66 +148,66 @@ const AdminPanel = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-white mb-6">Admin Panel</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Admin Panel</h1>
       <div className="flex space-x-2 mb-6 overflow-x-auto">
         {tabs.map(tab => {
           const Icon = tab.icon;
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${activeTab === tab.id ? 'bg-primary text-white' : 'bg-dark text-gray-300 hover:bg-gray-800'}`}>
+              className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors ${activeTab === tab.id ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:bg-orange-50 border border-primary'}`}>
               <Icon size={18} /><span>{tab.label}</span>
             </button>
           );
         })}
       </div>
 
-      <div className="bg-dark rounded-lg p-6 border border-gray-800">
+      <div className="bg-white rounded-lg p-6 border-2 border-primary shadow-lg">
         {activeTab === 'overview' && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Dashboard Overview</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard Overview</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-darker rounded-lg p-6 border border-gray-700">
+              <div className="bg-orange-50 rounded-lg p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-400">Total Books</h3>
+                  <h3 className="text-gray-600 font-semibold">Total Books</h3>
                   <FiBook className="text-primary" size={24} />
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.totalBooks}</p>
+                <p className="text-3xl font-bold text-gray-800">{stats.totalBooks}</p>
               </div>
-              <div className="bg-darker rounded-lg p-6 border border-gray-700">
+              <div className="bg-orange-50 rounded-lg p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-400">Total Authors</h3>
-                  <FiUsers className="text-accent" size={24} />
+                  <h3 className="text-gray-600 font-semibold">Total Authors</h3>
+                  <FiUsers className="text-primary" size={24} />
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.totalAuthors}</p>
+                <p className="text-3xl font-bold text-gray-800">{stats.totalAuthors}</p>
               </div>
-              <div className="bg-darker rounded-lg p-6 border border-gray-700">
+              <div className="bg-orange-50 rounded-lg p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-400">Total Poems</h3>
-                  <FiFileText className="text-success" size={24} />
+                  <h3 className="text-gray-600 font-semibold">Total Poems</h3>
+                  <FiFileText className="text-primary" size={24} />
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.totalPoems}</p>
+                <p className="text-3xl font-bold text-gray-800">{stats.totalPoems}</p>
               </div>
-              <div className="bg-darker rounded-lg p-6 border border-gray-700">
+              <div className="bg-orange-50 rounded-lg p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-400">Total Users</h3>
-                  <FiUsers className="text-yellow-500" size={24} />
+                  <h3 className="text-gray-600 font-semibold">Total Users</h3>
+                  <FiUsers className="text-primary" size={24} />
                 </div>
-                <p className="text-3xl font-bold text-white">{stats.totalUsers}</p>
+                <p className="text-3xl font-bold text-gray-800">{stats.totalUsers}</p>
               </div>
             </div>
-            <div className="bg-primary/10 border border-primary rounded-lg p-6">
-              <h3 className="text-xl font-bold text-white mb-4">Quick Actions</h3>
+            <div className="bg-orange-50 border-2 border-primary rounded-lg p-6 shadow-md">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <button onClick={() => setShowBookModal(true)}
-                  className="bg-primary hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md">
                   <FiPlus /><span>Add New Book</span>
                 </button>
                 <button onClick={() => setShowAuthorModal(true)}
-                  className="bg-accent hover:bg-purple-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md">
                   <FiPlus /><span>Add New Author</span>
                 </button>
                 <button onClick={() => setShowPoemModal(true)}
-                  className="bg-success hover:bg-green-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2">
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md">
                   <FiPlus /><span>Add New Poem</span>
                 </button>
               </div>
@@ -218,38 +218,38 @@ const AdminPanel = () => {
         {activeTab === 'books' && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Manage Books ({books.length})</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Manage Books ({books.length})</h2>
               <button onClick={() => setShowBookModal(true)}
-                className="bg-primary hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 shadow-md">
                 <FiPlus /><span>Add Book</span>
               </button>
             </div>
             {books.length === 0 ? (
-              <div className="bg-darker rounded-lg p-8 text-center border border-gray-700">
-                <FiBook size={48} className="mx-auto mb-4 text-gray-600" />
-                <p className="text-gray-400">No books found</p>
+              <div className="bg-orange-50 rounded-lg p-8 text-center border-2 border-primary">
+                <FiBook size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No books found</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {books.map(book => (
-                  <div key={book.id} className="bg-darker rounded-lg p-4 border border-gray-700">
+                  <div key={book.id} className="bg-orange-50 rounded-lg p-4 border-2 border-primary shadow-md">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-2">
-                          <h3 className="text-lg font-semibold text-white">{book.title}</h3>
-                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${book.is_active ? 'bg-green-900/30 text-green-400 border border-green-500' : 'bg-red-900/30 text-red-400 border border-red-500'}`}>
+                          <h3 className="text-lg font-semibold text-gray-800">{book.title}</h3>
+                          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${book.is_active ? 'bg-green-100 text-green-700 border-2 border-green-500' : 'bg-red-100 text-red-700 border-2 border-red-500'}`}>
                             {book.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
-                        <p className="text-gray-400 text-sm">{book.author_name || 'No author'} • {book.category_name || 'No category'}</p>
+                        <p className="text-gray-600 text-sm">{book.author_name || 'No author'} • {book.category_name || 'No category'}</p>
                       </div>
                       <div className="flex items-center space-x-2">
                         <button onClick={() => toggleBookStatus(book.id, book.is_active)}
-                          className={`p-2 rounded-lg transition-colors ${book.is_active ? 'bg-yellow-900/30 text-yellow-400 hover:bg-yellow-900/50' : 'bg-green-900/30 text-green-400 hover:bg-green-900/50'}`}>
+                          className={`p-2 rounded-lg transition-colors ${book.is_active ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200 border-2 border-yellow-500' : 'bg-green-100 text-green-700 hover:bg-green-200 border-2 border-green-500'}`}>
                           {book.is_active ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                         </button>
                         <button onClick={() => deleteBook(book.id)}
-                          className="p-2 bg-red-900/30 text-red-400 hover:bg-red-900/50 rounded-lg transition-colors">
+                          className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500">
                           <FiTrash2 size={18} />
                         </button>
                       </div>
@@ -264,29 +264,29 @@ const AdminPanel = () => {
         {activeTab === 'authors' && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Manage Authors ({authors.length})</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Manage Authors ({authors.length})</h2>
               <button onClick={() => setShowAuthorModal(true)}
-                className="bg-accent hover:bg-purple-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 shadow-md">
                 <FiPlus /><span>Add Author</span>
               </button>
             </div>
             {authors.length === 0 ? (
-              <div className="bg-darker rounded-lg p-8 text-center border border-gray-700">
-                <FiUsers size={48} className="mx-auto mb-4 text-gray-600" />
-                <p className="text-gray-400">No authors found</p>
+              <div className="bg-orange-50 rounded-lg p-8 text-center border-2 border-primary">
+                <FiUsers size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No authors found</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {authors.map(author => (
-                  <div key={author.id} className="bg-darker rounded-lg p-4 border border-gray-700">
+                  <div key={author.id} className="bg-orange-50 rounded-lg p-4 border-2 border-primary shadow-md">
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-white">{author.name}</h3>
+                      <h3 className="text-lg font-semibold text-gray-800">{author.name}</h3>
                       <button onClick={() => deleteAuthor(author.id)}
-                        className="p-2 bg-red-900/30 text-red-400 hover:bg-red-900/50 rounded-lg transition-colors">
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500">
                         <FiTrash2 size={16} />
                       </button>
                     </div>
-                    {author.bio && <p className="text-gray-400 text-sm line-clamp-2">{author.bio}</p>}
+                    {author.bio && <p className="text-gray-600 text-sm line-clamp-2">{author.bio}</p>}
                   </div>
                 ))}
               </div>
@@ -297,29 +297,29 @@ const AdminPanel = () => {
         {activeTab === 'poems' && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Manage Poems ({poems.length})</h2>
+              <h2 className="text-2xl font-bold text-gray-800">Manage Poems ({poems.length})</h2>
               <button onClick={() => setShowPoemModal(true)}
-                className="bg-success hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2">
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 shadow-md">
                 <FiPlus /><span>Add Poem</span>
               </button>
             </div>
             {poems.length === 0 ? (
-              <div className="bg-darker rounded-lg p-8 text-center border border-gray-700">
-                <FiFileText size={48} className="mx-auto mb-4 text-gray-600" />
-                <p className="text-gray-400">No poems found</p>
+              <div className="bg-orange-50 rounded-lg p-8 text-center border-2 border-primary">
+                <FiFileText size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No poems found</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {poems.map(poem => (
-                  <div key={poem.id} className="bg-darker rounded-lg p-4 border border-gray-700">
+                  <div key={poem.id} className="bg-orange-50 rounded-lg p-4 border-2 border-primary shadow-md">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-white mb-2">{poem.title}</h3>
-                        <p className="text-gray-400 text-sm mb-2 line-clamp-2">{poem.content}</p>
+                        <h3 className="text-lg font-semibold text-gray-800 mb-2">{poem.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{poem.content}</p>
                         <p className="text-gray-500 text-xs">{poem.author_name || 'Anonymous'} • {poem.category_name || 'No category'}</p>
                       </div>
                       <button onClick={() => deletePoem(poem.id)}
-                        className="p-2 bg-red-900/30 text-red-400 hover:bg-red-900/50 rounded-lg transition-colors">
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500">
                         <FiTrash2 size={18} />
                       </button>
                     </div>

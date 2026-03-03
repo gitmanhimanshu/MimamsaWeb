@@ -91,44 +91,40 @@ const Home = () => {
 
   return (
     <div className="p-6">
-      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Digital Library</h1>
-        <p className="text-gray-400">Explore our collection of books</p>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Digital Library</h1>
+        <p className="text-gray-700">Explore our collection of books</p>
       </div>
 
-      {/* Search and Filter */}
       <div className="mb-6 space-y-4">
-        {/* Search Bar */}
         <div className="relative">
-          <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search books, authors..."
-            className="w-full pl-12 pr-12 py-3 bg-dark border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+            className="w-full pl-12 pr-12 py-3 bg-white border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors shadow-sm"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
             >
               <FiX />
             </button>
           )}
         </div>
 
-        {/* Filter Toggle */}
         <div className="flex items-center justify-between">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2 px-4 py-2 bg-dark border border-gray-700 rounded-lg text-gray-300 hover:text-white hover:border-primary transition-colors"
+            className="flex items-center space-x-2 px-4 py-2 bg-white border-2 border-orange-200 rounded-xl text-gray-700 hover:text-primary hover:border-primary transition-colors shadow-sm font-semibold"
           >
             <FiFilter />
             <span>Filters</span>
             {hasActiveFilters && (
-              <span className="bg-primary text-white text-xs px-2 py-1 rounded-full">
+              <span className="bg-primary text-white text-xs px-2 py-1 rounded-full font-bold">
                 {[selectedCategory, selectedAuthor, selectedGenre].filter(Boolean).length}
               </span>
             )}
@@ -137,22 +133,21 @@ const Home = () => {
           {hasActiveFilters && (
             <button
               onClick={clearFilters}
-              className="text-sm text-primary hover:text-blue-400 transition-colors"
+              className="text-primary hover:text-orange-600 font-semibold"
             >
-              Clear All
+              Clear Filters
             </button>
           )}
         </div>
 
-        {/* Filter Options */}
         {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-dark border border-gray-700 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white border-2 border-orange-200 rounded-xl shadow-sm">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Category</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 bg-darker border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-3 py-2 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
               >
                 <option value="">All Categories</option>
                 {categories.map(cat => (
@@ -162,11 +157,11 @@ const Home = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Author</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Author</label>
               <select
                 value={selectedAuthor}
                 onChange={(e) => setSelectedAuthor(e.target.value)}
-                className="w-full px-3 py-2 bg-darker border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-3 py-2 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
               >
                 <option value="">All Authors</option>
                 {authors.map(author => (
@@ -176,11 +171,11 @@ const Home = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Genre</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Genre</label>
               <select
                 value={selectedGenre}
                 onChange={(e) => setSelectedGenre(e.target.value)}
-                className="w-full px-3 py-2 bg-darker border border-gray-700 rounded-lg text-white focus:outline-none focus:border-primary"
+                className="w-full px-3 py-2 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
               >
                 <option value="">All Genres</option>
                 {genres.map(genre => (
@@ -192,18 +187,16 @@ const Home = () => {
         )}
       </div>
 
-      {/* Results Count */}
       <div className="mb-4">
-        <p className="text-gray-400">
+        <p className="text-gray-700 font-semibold">
           {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'} found
         </p>
       </div>
 
-      {/* Books Grid */}
       {filteredBooks.length === 0 ? (
-        <div className="text-center py-20">
+        <div className="text-center py-20 bg-white rounded-xl shadow-md">
           <p className="text-6xl mb-4">📚</p>
-          <p className="text-gray-400 text-lg">No books found</p>
+          <p className="text-gray-600 text-lg">No books found</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -211,10 +204,9 @@ const Home = () => {
             <Link
               key={book.id}
               to={`/book/${book.id}`}
-              className="bg-dark rounded-lg overflow-hidden border border-gray-800 hover:border-primary transition-all duration-300 hover:transform hover:scale-105"
+              className="bg-white rounded-xl overflow-hidden border-2 border-orange-100 hover:border-primary transition-all duration-300 hover:transform hover:scale-105 shadow-md hover:shadow-xl"
             >
-              {/* Cover Image */}
-              <div className="relative h-64 bg-darker">
+              <div className="relative h-64 bg-orange-50">
                 {book.cover_image_url ? (
                   <img
                     src={book.cover_image_url}
@@ -222,33 +214,32 @@ const Home = () => {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-6xl">📚</span>
+                  <div className="w-full h-full flex items-center justify-center text-6xl">
+                    📚
                   </div>
                 )}
                 {book.is_paid && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded font-bold">
                     Paid
                   </div>
                 )}
               </div>
 
-              {/* Book Info */}
               <div className="p-4">
-                <h3 className="text-white font-semibold text-lg mb-2 line-clamp-2">
+                <h3 className="text-gray-800 font-bold text-lg mb-2 line-clamp-2">
                   {book.title}
                 </h3>
                 {book.author_name && (
-                  <p className="text-gray-400 text-sm mb-2">by {book.author_name}</p>
+                  <p className="text-gray-600 text-sm mb-2">by {book.author_name}</p>
                 )}
                 <div className="flex items-center justify-between">
                   {book.category_name && (
-                    <span className="text-xs text-gray-500">{book.category_name}</span>
+                    <span className="text-xs text-gray-600 font-semibold">{book.category_name}</span>
                   )}
                   {book.average_rating > 0 && (
                     <div className="flex items-center space-x-1 text-yellow-500">
                       <FiStar className="fill-current" size={14} />
-                      <span className="text-xs">{book.average_rating}</span>
+                      <span className="text-xs font-bold">{book.average_rating}</span>
                     </div>
                   )}
                 </div>

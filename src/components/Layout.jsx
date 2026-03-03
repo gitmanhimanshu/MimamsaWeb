@@ -36,16 +36,16 @@ const Layout = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-darker">
+    <div className="min-h-screen bg-orange-50">
       {/* Header */}
-      <header className="bg-dark border-b border-gray-800 sticky top-0 z-50">
+      <header className="bg-primary border-b border-orange-600 sticky top-0 z-50 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden mr-4 text-gray-400 hover:text-white"
+                className="lg:hidden mr-4 text-white hover:text-orange-100"
               >
                 {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
               </button>
@@ -55,20 +55,20 @@ const Layout = ({ children }) => {
                   alt="Mimanasa Logo" 
                   className="w-10 h-10 rounded-full object-cover"
                 />
-                <span className="text-2xl font-bold text-primary">Mimanasa</span>
+                <span className="text-2xl font-bold text-white">Mimanasa</span>
               </Link>
             </div>
 
             {/* User Info */}
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-400 hidden sm:block">
+              <span className="text-sm text-white hidden sm:block font-semibold">
                 {user?.username}
               </span>
               {user?.profile_photo && (
                 <img
                   src={user.profile_photo}
                   alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover"
+                  className="w-8 h-8 rounded-full object-cover border-2 border-white"
                 />
               )}
             </div>
@@ -80,8 +80,8 @@ const Layout = ({ children }) => {
         {/* Sidebar */}
         <aside
           className={`
-            fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-dark border-r border-gray-800
-            transform transition-transform duration-300 ease-in-out z-40
+            fixed lg:sticky top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white border-r border-orange-200
+            transform transition-transform duration-300 ease-in-out z-40 shadow-lg
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}
         >
@@ -91,7 +91,7 @@ const Layout = ({ children }) => {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
-                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-orange-100 hover:text-primary transition-colors font-medium"
               >
                 <item.icon size={20} />
                 <span>{item.label}</span>
@@ -100,7 +100,7 @@ const Layout = ({ children }) => {
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-red-900/20 hover:text-red-400 transition-colors"
+              className="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-red-100 hover:text-red-600 transition-colors font-medium"
             >
               <FiLogOut size={20} />
               <span>Logout</span>
