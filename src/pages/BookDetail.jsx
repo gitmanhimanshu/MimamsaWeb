@@ -117,16 +117,16 @@ const BookDetail = () => {
   return (
     <div className="min-h-screen bg-darker pb-20">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-darker/95 backdrop-blur-sm border-b border-gray-800">
+      <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-orange-200 shadow-md">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-700 hover:text-primary transition-colors"
           >
             <FiArrowLeft size={24} />
           </button>
-          <h1 className="text-lg font-bold text-white">Book Details</h1>
-          <button className="text-gray-400 hover:text-white transition-colors">
+          <h1 className="text-lg font-bold text-gray-900">Book Details</h1>
+          <button className="text-gray-700 hover:text-primary transition-colors">
             <FiShare2 size={24} />
           </button>
         </div>
@@ -150,13 +150,13 @@ const BookDetail = () => {
         </div>
 
         {/* Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-3">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-3">
           {book.title}
         </h2>
 
         {/* Author */}
         {book.author_name && (
-          <p className="text-lg text-primary text-center mb-4 italic">
+          <p className="text-lg text-primary text-center mb-4 italic font-semibold">
             by {book.author_name}
           </p>
         )}
@@ -168,38 +168,38 @@ const BookDetail = () => {
               <FiStar
                 key={star}
                 size={20}
-                className={star <= Math.round(book.average_rating || 0) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
+                className={star <= Math.round(book.average_rating || 0) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
               />
             ))}
           </div>
-          <span className="text-white font-semibold">
+          <span className="text-gray-900 font-semibold">
             {book.average_rating > 0 ? book.average_rating.toFixed(1) : '0.0'}
           </span>
-          <span className="text-gray-400">
+          <span className="text-gray-700">
             ({book.review_count || 0} reviews)
           </span>
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-dark rounded-xl p-4 text-center">
-            <p className="text-gray-400 text-sm mb-1">CATEGORY</p>
-            <p className="text-primary font-semibold">{book.category_name || 'N/A'}</p>
+          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-sm mb-1 font-semibold">CATEGORY</p>
+            <p className="text-primary font-bold">{book.category_name || 'N/A'}</p>
           </div>
-          <div className="bg-dark rounded-xl p-4 text-center">
-            <p className="text-gray-400 text-sm mb-1">PAGES</p>
-            <p className="text-primary font-semibold">{book.pages || '342'}</p>
+          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-sm mb-1 font-semibold">PAGES</p>
+            <p className="text-primary font-bold">{book.pages || '342'}</p>
           </div>
-          <div className="bg-dark rounded-xl p-4 text-center">
-            <p className="text-gray-400 text-sm mb-1">LANGUAGE</p>
-            <p className="text-primary font-semibold">{book.language || 'Hindi'}</p>
+          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-sm mb-1 font-semibold">LANGUAGE</p>
+            <p className="text-primary font-bold">{book.language || 'Hindi'}</p>
           </div>
         </div>
 
         {/* Synopsis */}
         <div className="mb-8">
-          <h3 className="text-xl font-bold text-white mb-4">Synopsis</h3>
-          <p className="text-gray-300 leading-relaxed">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Synopsis</h3>
+          <p className="text-gray-800 leading-relaxed">
             {book.description || 'No description available for this book.'}
           </p>
         </div>
@@ -208,12 +208,12 @@ const BookDetail = () => {
         {(book.genre_display || book.published_year) && (
           <div className="flex flex-wrap gap-3 mb-8">
             {book.genre_display && (
-              <span className="px-4 py-2 bg-dark text-gray-300 rounded-full text-sm">
+              <span className="px-4 py-2 bg-orange-50 text-gray-800 rounded-full text-sm border-2 border-orange-200 font-semibold">
                 🎭 {book.genre_display}
               </span>
             )}
             {book.published_year && (
-              <span className="px-4 py-2 bg-dark text-gray-300 rounded-full text-sm">
+              <span className="px-4 py-2 bg-orange-50 text-gray-800 rounded-full text-sm border-2 border-orange-200 font-semibold">
                 📅 {book.published_year}
               </span>
             )}
@@ -229,18 +229,18 @@ const BookDetail = () => {
         <div className="space-y-3 mb-8">
           <button
             onClick={openReader}
-            className="w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg"
           >
             <span className="text-xl">📖</span>
             <span className="text-lg">Read Now</span>
           </button>
           
           <div className="grid grid-cols-2 gap-3">
-            <button className="bg-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border border-gray-700">
+            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md">
               <FiBookmark size={18} />
               <span>Save</span>
             </button>
-            <button className="bg-dark hover:bg-gray-800 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border border-gray-700">
+            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md">
               <FiDownload size={18} />
               <span>Offline</span>
             </button>
@@ -250,24 +250,24 @@ const BookDetail = () => {
         {/* Reviews Section */}
         <div className="mt-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-white">Reviews</h3>
+            <h3 className="text-2xl font-bold text-gray-900">Reviews</h3>
             <button
               onClick={() => setShowReviewModal(true)}
-              className="text-primary hover:text-blue-400 font-semibold flex items-center space-x-1"
+              className="text-primary hover:text-orange-600 font-bold flex items-center space-x-1 bg-orange-50 px-4 py-2 rounded-lg border-2 border-primary shadow-md"
             >
               <FiStar size={18} />
-              <span>{userReview ? 'Edit' : 'Write'}</span>
+              <span>{userReview ? 'Edit Review' : 'Write Review'}</span>
             </button>
           </div>
 
           {/* User's Review */}
           {userReview && (
-            <div className="bg-dark border-2 border-primary p-4 rounded-xl mb-4">
+            <div className="bg-orange-50 border-2 border-primary p-4 rounded-xl mb-4 shadow-md">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-primary font-semibold">Your Review</span>
+                <span className="text-primary font-bold">Your Review</span>
                 <button
                   onClick={handleDeleteReview}
-                  className="text-red-400 hover:text-red-300 flex items-center space-x-1"
+                  className="text-red-600 hover:text-red-700 flex items-center space-x-1"
                 >
                   <FiTrash2 size={16} />
                 </button>
@@ -277,12 +277,12 @@ const BookDetail = () => {
                   <FiStar
                     key={star}
                     size={16}
-                    className={star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
+                    className={star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
                   />
                 ))}
               </div>
               {userReview.comment && (
-                <p className="text-gray-300 text-sm">{userReview.comment}</p>
+                <p className="text-gray-800 text-sm">{userReview.comment}</p>
               )}
             </div>
           )}
@@ -291,31 +291,31 @@ const BookDetail = () => {
           {reviews.length > 0 ? (
             <div className="space-y-3">
               {reviews.map(review => (
-                <div key={review.id} className="bg-dark p-4 rounded-xl">
+                <div key={review.id} className="bg-white p-4 rounded-xl border-2 border-orange-200 shadow-md">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white font-semibold text-sm">{review.user_name}</span>
+                    <span className="text-gray-900 font-bold text-sm">{review.user_name}</span>
                     <div className="flex items-center space-x-1">
                       {[1, 2, 3, 4, 5].map(star => (
                         <FiStar
                           key={star}
                           size={12}
-                          className={star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-600'}
+                          className={star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
                         />
                       ))}
                     </div>
                   </div>
                   {review.comment && (
-                    <p className="text-gray-300 text-sm mb-2">{review.comment}</p>
+                    <p className="text-gray-800 text-sm mb-2">{review.comment}</p>
                   )}
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-gray-600 text-xs">
                     {new Date(review.created_at).toLocaleDateString()}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="bg-dark p-8 rounded-xl text-center">
-              <p className="text-gray-400">No reviews yet. Be the first to review!</p>
+            <div className="bg-white p-8 rounded-xl text-center border-2 border-orange-200">
+              <p className="text-gray-600">No reviews yet. Be the first to review!</p>
             </div>
           )}
         </div>

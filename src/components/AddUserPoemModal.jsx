@@ -59,8 +59,8 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full border-2 border-orange-200 shadow-2xl my-8">
+    <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full border-2 border-orange-200 shadow-2xl my-20">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold text-gray-800">Write Your Poem ✍️</h3>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-800 transition-colors">
