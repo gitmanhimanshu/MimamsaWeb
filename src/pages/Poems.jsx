@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { FiArrowLeft, FiStar, FiTrash2, FiEdit3 } from 'react-icons/fi';
+import { FiArrowLeft, FiStar, FiTrash2, FiEdit3, FiFilter } from 'react-icons/fi';
 import AddUserPoemModal from '../components/AddUserPoemModal';
 
 const Poems = () => {
   const { user } = useAuth();
-  const [categories, setCategories] = useState([]);
   const [poems, setPoems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedGenre, setSelectedGenre] = useState(null);
   const [selectedPoem, setSelectedPoem] = useState(null);
   const [loading, setLoading] = useState(true);
   
@@ -21,6 +21,27 @@ const Poems = () => {
   const [showAddPoemModal, setShowAddPoemModal] = useState(false);
   const [myPoems, setMyPoems] = useState([]);
   const [showMyPoems, setShowMyPoems] = useState(false);
+
+  // Static genres - same as AddUserPoemModal
+  const staticGenres = [
+    { value: 'poetry', label: 'Poetry' },
+    { value: 'classical_poetry', label: 'Classical Poetry' },
+    { value: 'modern_poetry', label: 'Modern Poetry' },
+    { value: 'ghazal', label: 'Ghazal' },
+    { value: 'free_verse', label: 'Free Verse' }
+  ];
+
+  // Static categories - same as AddUserPoemModal
+  const staticCategories = [
+    { value: 'love', label: 'प्रेम कविता', icon: '💕' },
+    { value: 'nature', label: 'प्रकृति', icon: '🌿' },
+    { value: 'patriotic', label: 'देशभक्ति', icon: '🇮🇳' },
+    { value: 'spiritual', label: 'आध्यात्मिक', icon: '🕉️' },
+    { value: 'social', label: 'सामाजिक', icon: '👥' },
+    { value: 'motivational', label: 'प्रेरणादायक', icon: '💪' },
+    { value: 'sad', label: 'दुःख', icon: '😢' },
+    { value: 'funny', label: 'हास्य', icon: '😄' }
+  ];
 
   useEffect(() => {
     fetchData();
@@ -35,11 +56,7 @@ const Poems = () => {
 
   const fetchData = async () => {
     try {
-      const [categoriesRes, poemsRes] = await Promise.all([
-        api.get('/poem-categories/'),
-        api.get('/poems/')
-      ]);
-      setCategories(categoriesRes.data);
+      const poemsRes = await api.get('/poems/');
       setPoems(poemsRes.data);
     } catch (error) {
       console.error('Error fetching poems:', error);
@@ -116,8 +133,20 @@ const Poems = () => {
 
   const getFilteredPoems = () => {
     if (showMyPoems) return myPoems;
-    if (!selectedCategory) return poems;
-    return poems.filter(p => p.category === selectedCategory);
+    
+    let filtered = poems;
+    
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter(p => p.category === selectedCategory);
+    }
+    
+    // Filter by genre
+    if (selectedGenre) {
+      filtered = filtered.filter(p => p.genre === selectedGenre);
+    }
+    
+    return filtered;
   };
 
   if (loading) {
@@ -326,7 +355,9 @@ const Poems = () => {
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">कविताएँ (Poems)</h1>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
+          ✨ कविताएँ (Poems) ✨
+        </h1>
         <button
           onClick={() => setShowAddPoemModal(true)}
           className="bg-primary hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors flex items-center space-x-2 shadow-lg"
@@ -334,6 +365,18 @@ const Poems = () => {
           <FiEdit3 size={20} />
           <span>Write Your Poem</span>
         </button>
+      </div>
+
+      {/* Welcome Banner */}
+      <div className="mb-8 bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 border-2 border-primary rounded-2xl p-6 shadow-lg">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            🌟 Welcome to the Poetry World! 🌟
+          </h2>
+          <p className="text-gray-700 text-lg">
+            Discover beautiful poems, share your creativity, and connect with fellow poetry lovers
+          </p>
+        </div>
       </div>
 
       {/* My Poems Section */}
@@ -366,7 +409,7 @@ const Poems = () => {
 
       {/* Categories */}
       {!showMyPoems && (
-        <div className="mb-8">
+        <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">श्रेणियाँ</h2>
           <div className="flex flex-wrap gap-3">
             <button
@@ -379,21 +422,53 @@ const Poems = () => {
             >
               सभी
             </button>
-            {categories.map(cat => (
+            {staticCategories.map(cat => (
               <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                key={cat.value}
+                onClick={() => setSelectedCategory(cat.value)}
                 className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2 shadow-sm ${
-                  selectedCategory === cat.id
+                  selectedCategory === cat.value
                     ? 'bg-primary text-white shadow-md'
                     : 'bg-white text-gray-700 hover:bg-orange-50'
                 }`}
               >
                 <span>{cat.icon}</span>
-                <span>{cat.name}</span>
-                <span className="bg-orange-100 text-primary px-2 py-0.5 rounded-full text-xs font-bold">
-                  {cat.poems_count || 0}
-                </span>
+                <span>{cat.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Genres */}
+      {!showMyPoems && (
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+            <FiFilter />
+            <span>विधाएँ (Genres)</span>
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setSelectedGenre(null)}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm ${
+                !selectedGenre
+                  ? 'bg-primary text-white shadow-md'
+                  : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
+              }`}
+            >
+              सभी विधाएँ
+            </button>
+            {staticGenres.map(genre => (
+              <button
+                key={genre.value}
+                onClick={() => setSelectedGenre(genre.value)}
+                className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm ${
+                  selectedGenre === genre.value
+                    ? 'bg-primary text-white shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
+                }`}
+              >
+                {genre.label}
               </button>
             ))}
           </div>
@@ -405,9 +480,13 @@ const Poems = () => {
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           {showMyPoems
             ? 'मेरी कविताएँ'
-            : selectedCategory
-              ? categories.find(c => c.id === selectedCategory)?.name || 'कविताएँ'
-              : 'सभी कविताएँ'}
+            : selectedCategory && selectedGenre
+              ? `${staticCategories.find(c => c.value === selectedCategory)?.label || 'कविताएँ'} - ${staticGenres.find(g => g.value === selectedGenre)?.label || ''}`
+              : selectedCategory
+                ? staticCategories.find(c => c.value === selectedCategory)?.label || 'कविताएँ'
+                : selectedGenre
+                  ? `${staticGenres.find(g => g.value === selectedGenre)?.label || ''} कविताएँ`
+                  : 'सभी कविताएँ'}
         </h2>
         
         {getFilteredPoems().length === 0 ? (

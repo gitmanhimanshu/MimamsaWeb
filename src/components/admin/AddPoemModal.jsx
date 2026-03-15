@@ -1,15 +1,36 @@
 import { FiX } from 'react-icons/fi';
 import { useState } from 'react';
 
-const AddPoemModal = ({ show, onClose, onSubmit, authors, poemCategories }) => {
+const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
   const [form, setForm] = useState({
-    title: '', content: '', author: '', category: '', language: 'Hindi', background_image_url: ''
+    title: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: ''
   });
+
+  // Static categories
+  const categories = [
+    { value: 'love', label: 'प्रेम कविता' },
+    { value: 'nature', label: 'प्रकृति' },
+    { value: 'patriotic', label: 'देशभक्ति' },
+    { value: 'spiritual', label: 'आध्यात्मिक' },
+    { value: 'social', label: 'सामाजिक' },
+    { value: 'motivational', label: 'प्रेरणादायक' },
+    { value: 'sad', label: 'दुःख' },
+    { value: 'funny', label: 'हास्य' }
+  ];
+
+  // Static genres
+  const genres = [
+    { value: 'poetry', label: 'Poetry' },
+    { value: 'classical_poetry', label: 'Classical Poetry' },
+    { value: 'modern_poetry', label: 'Modern Poetry' },
+    { value: 'ghazal', label: 'Ghazal' },
+    { value: 'free_verse', label: 'Free Verse' }
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(form);
-    setForm({ title: '', content: '', author: '', category: '', language: 'Hindi', background_image_url: '' });
+    setForm({ title: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: '' });
   };
 
   if (!show) return null;
@@ -34,7 +55,12 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors, poemCategories }) => {
           <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})}
             className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
             <option value="">Select Category</option>
-            {poemCategories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+          <select value={form.genre} onChange={(e) => setForm({...form, genre: e.target.value})}
+            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+            <option value="">Select Genre</option>
+            {genres.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
           <button type="submit"
             className="w-full bg-primary hover:bg-orange-600 text-white py-3 rounded-lg font-semibold shadow-md">

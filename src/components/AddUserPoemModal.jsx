@@ -6,28 +6,33 @@ import { useAuth } from '../context/AuthContext';
 const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
     title: '',
     content: '',
     category: '',
+    genre: 'poetry',
     language: 'Hindi',
   });
 
-  useEffect(() => {
-    if (show) {
-      fetchCategories();
-    }
-  }, [show]);
+  // Static options - no API calls needed
+  const genres = [
+    { value: 'poetry', label: 'Poetry' },
+    { value: 'classical_poetry', label: 'Classical Poetry' },
+    { value: 'modern_poetry', label: 'Modern Poetry' },
+    { value: 'ghazal', label: 'Ghazal' },
+    { value: 'free_verse', label: 'Free Verse' }
+  ];
 
-  const fetchCategories = async () => {
-    try {
-      const response = await api.get('/poem-categories/');
-      setCategories(response.data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
+  const categories = [
+    { id: 'love', name: 'प्रेम कविता', icon: '💕' },
+    { id: 'nature', name: 'प्रकृति', icon: '🌿' },
+    { id: 'patriotic', name: 'देशभक्ति', icon: '🇮🇳' },
+    { id: 'spiritual', name: 'आध्यात्मिक', icon: '🕉️' },
+    { id: 'social', name: 'सामाजिक', icon: '👥' },
+    { id: 'motivational', name: 'प्रेरणादायक', icon: '💪' },
+    { id: 'sad', name: 'दुःख', icon: '😢' },
+    { id: 'funny', name: 'हास्य', icon: '😄' }
+  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +50,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
       });
       
       alert('Your poem has been published!');
-      setForm({ title: '', content: '', category: '', language: 'Hindi' });
+      setForm({ title: '', content: '', category: '', genre: 'poetry', language: 'Hindi' });
       onSuccess();
       onClose();
     } catch (error) {
@@ -93,7 +98,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-gray-700 mb-2 font-semibold">Category</label>
               <select
@@ -105,6 +110,22 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
                 {categories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
                     {cat.icon} {cat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-gray-700 mb-2 font-semibold">Genre *</label>
+              <select
+                value={form.genre}
+                onChange={(e) => setForm({ ...form, genre: e.target.value })}
+                className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
+                required
+              >
+                {genres.map((genre) => (
+                  <option key={genre.value} value={genre.value}>
+                    {genre.label}
                   </option>
                 ))}
               </select>

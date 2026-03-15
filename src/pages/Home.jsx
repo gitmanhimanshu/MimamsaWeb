@@ -187,12 +187,6 @@ const Home = () => {
         )}
       </div>
 
-      <div className="mb-4">
-        <p className="text-gray-700 font-semibold">
-          {filteredBooks.length} {filteredBooks.length === 1 ? 'book' : 'books'} found
-        </p>
-      </div>
-
       {filteredBooks.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl shadow-md">
           <p className="text-6xl mb-4">📚</p>

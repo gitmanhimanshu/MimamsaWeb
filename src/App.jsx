@@ -58,6 +58,14 @@ function AppRoutes() {
         path="/"
         element={
           <ProtectedRoute>
+            <Navigate to="/poems" replace />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute>
             <Layout>
               <Home />
             </Layout>
@@ -106,7 +114,7 @@ function AppRoutes() {
       />
 
       {/* Catch all */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/poems" replace />} />
     </Routes>
   );
 }

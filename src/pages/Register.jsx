@@ -33,7 +33,7 @@ const Register = () => {
     const result = await register(username, email, password);
     
     if (result.success) {
-      navigate('/');
+      navigate('/poems');
     } else {
       setError(result.error);
     }
