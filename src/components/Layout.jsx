@@ -23,8 +23,8 @@ const Layout = ({ children }) => {
   };
 
   const menuItems = [
-    { icon: FiFileText, label: '📝 कविताएँ', path: '/poems', highlight: true },
-    { icon: FiHome, label: 'Home', path: '/home', highlight: false },
+    { icon: FiHome, label: 'Home', path: '/home', highlight: true },
+    { icon: FiFileText, label: '📝 कविताएँ', path: '/poems', highlight: false },
     { icon: FiUser, label: 'Profile', path: '/profile', highlight: false },
     { icon: FiBook, label: 'Books', path: '/home', highlight: false },
   ];
@@ -52,7 +52,7 @@ const Layout = ({ children }) => {
               >
                 {sidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
               </button>
-              <Link to="/poems" className="flex items-center space-x-3">
+              <Link to="/home" className="flex items-center space-x-3">
                 <img 
                   src="/logo.png" 
                   alt="Mimanasa Logo" 

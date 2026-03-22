@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import LandingPage from './pages/LandingPage';
 import BookDetail from './pages/BookDetail';
 import Poems from './pages/Poems';
 import Profile from './pages/Profile';
@@ -42,26 +43,21 @@ function AppRoutes() {
 
   return (
     <Routes>
+      {/* Public Landing Page */}
+      <Route path="/" element={<LandingPage />} />
+      
       {/* Public Routes */}
       <Route 
         path="/login" 
-        element={user ? <Navigate to="/" replace /> : <Login />} 
+        element={user ? <Navigate to="/home" replace /> : <Login />} 
       />
       <Route 
         path="/register" 
-        element={user ? <Navigate to="/" replace /> : <Register />} 
+        element={user ? <Navigate to="/home" replace /> : <Register />} 
       />
       <Route path="/forgot-password" element={<ForgotPassword />} />
 
       {/* Protected Routes */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Navigate to="/poems" replace />
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/home"
         element={
@@ -114,7 +110,7 @@ function AppRoutes() {
       />
 
       {/* Catch all */}
-      <Route path="*" element={<Navigate to="/poems" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

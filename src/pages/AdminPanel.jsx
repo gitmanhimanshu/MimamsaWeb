@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { FiBook, FiUsers, FiFileText, FiList, FiTrash2, FiEye, FiEyeOff, FiPlus } from 'react-icons/fi';
+import { FiBook, FiUsers, FiFileText, FiList, FiTrash2, FiEye, FiEyeOff, FiPlus, FiMusic, FiVideo, FiBookOpen, FiEdit } from 'react-icons/fi';
 import AddBookModal from '../components/admin/AddBookModal';
 import AddAuthorModal from '../components/admin/AddAuthorModal';
+import EditAuthorModal from '../components/admin/EditAuthorModal';
 import AddPoemModal from '../components/admin/AddPoemModal';
+import AddShortStoryModal from '../components/admin/AddShortStoryModal';
+import AddAudiobookModal from '../components/admin/AddAudiobookModal';
+import AddVideoModal from '../components/admin/AddVideoModal';
 
 const AdminPanel = () => {
   const { user } = useAuth();
@@ -12,13 +16,21 @@ const AdminPanel = () => {
   const [books, setBooks] = useState([]);
   const [authors, setAuthors] = useState([]);
   const [poems, setPoems] = useState([]);
+  const [stories, setStories] = useState([]);
+  const [audiobooks, setAudiobooks] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [categories, setCategories] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState({ totalBooks: 0, totalAuthors: 0, totalPoems: 0, totalUsers: 0 });
+  const [stats, setStats] = useState({ totalBooks: 0, totalAuthors: 0, totalPoems: 0, totalStories: 0, totalAudiobooks: 0, totalVideos: 0 });
   const [showBookModal, setShowBookModal] = useState(false);
   const [showAuthorModal, setShowAuthorModal] = useState(false);
+  const [showEditAuthorModal, setShowEditAuthorModal] = useState(false);
+  const [editingAuthor, setEditingAuthor] = useState(null);
   const [showPoemModal, setShowPoemModal] = useState(false);
+  const [showStoryModal, setShowStoryModal] = useState(false);
+  const [showAudiobookModal, setShowAudiobookModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -40,13 +52,28 @@ const AdminPanel = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [booksRes, authorsRes, poemsRes] = await Promise.all([
-        api.get('/books/?show_all=true'), api.get('/authors/'), api.get('/poems/')
+      const [booksRes, authorsRes, poemsRes, storiesRes, audiobooksRes, videosRes] = await Promise.all([
+        api.get('/books/?show_all=true'), 
+        api.get('/authors/'), 
+        api.get('/poems/'),
+        api.get('/stories/'),
+        api.get('/audiobooks/'),
+        api.get('/videos/')
       ]);
       setBooks(booksRes.data);
       setAuthors(authorsRes.data);
       setPoems(poemsRes.data);
-      setStats({ totalBooks: booksRes.data.length, totalAuthors: authorsRes.data.length, totalPoems: poemsRes.data.length, totalUsers: '-' });
+      setStories(storiesRes.data);
+      setAudiobooks(audiobooksRes.data);
+      setVideos(videosRes.data);
+      setStats({ 
+        totalBooks: booksRes.data.length, 
+        totalAuthors: authorsRes.data.length, 
+        totalPoems: poemsRes.data.length,
+        totalStories: storiesRes.data.length,
+        totalAudiobooks: audiobooksRes.data.length,
+        totalVideos: videosRes.data.length
+      });
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -77,6 +104,24 @@ const AdminPanel = () => {
     }
   };
 
+  const handleEditAuthor = async (formData) => {
+    try {
+      await api.put(`/authors/${editingAuthor.id}/`, { ...formData, user_id: user.id });
+      alert('Author updated successfully!');
+      setShowEditAuthorModal(false);
+      setEditingAuthor(null);
+      fetchData();
+      fetchMetadata();
+    } catch (error) {
+      alert('Failed to update author');
+    }
+  };
+
+  const openEditAuthor = (author) => {
+    setEditingAuthor(author);
+    setShowEditAuthorModal(true);
+  };
+
   const handleAddPoem = async (formData) => {
     try {
       await api.post('/poems/', { ...formData, user_id: user.id });
@@ -85,6 +130,39 @@ const AdminPanel = () => {
       fetchData();
     } catch (error) {
       alert('Failed to add poem');
+    }
+  };
+
+  const handleAddStory = async (formData) => {
+    try {
+      await api.post('/stories/', { ...formData, user_id: user.id });
+      alert('Story added successfully!');
+      setShowStoryModal(false);
+      fetchData();
+    } catch (error) {
+      alert('Failed to add story');
+    }
+  };
+
+  const handleAddAudiobook = async (formData) => {
+    try {
+      await api.post('/audiobooks/', { ...formData, user_id: user.id });
+      alert('Audiobook added successfully!');
+      setShowAudiobookModal(false);
+      fetchData();
+    } catch (error) {
+      alert('Failed to add audiobook');
+    }
+  };
+
+  const handleAddVideo = async (formData) => {
+    try {
+      await api.post('/videos/', { ...formData, user_id: user.id });
+      alert('Video added successfully!');
+      setShowVideoModal(false);
+      fetchData();
+    } catch (error) {
+      alert('Failed to add video');
     }
   };
 
@@ -133,11 +211,47 @@ const AdminPanel = () => {
     }
   };
 
+  const deleteStory = async (storyId) => {
+    if (!confirm('Delete this story?')) return;
+    try {
+      await api.delete(`/stories/${storyId}/`, { data: { user_id: user.id } });
+      alert('Story deleted!');
+      fetchData();
+    } catch (error) {
+      alert('Failed to delete');
+    }
+  };
+
+  const deleteAudiobook = async (audiobookId) => {
+    if (!confirm('Delete this audiobook?')) return;
+    try {
+      await api.delete(`/audiobooks/${audiobookId}/`, { data: { user_id: user.id } });
+      alert('Audiobook deleted!');
+      fetchData();
+    } catch (error) {
+      alert('Failed to delete');
+    }
+  };
+
+  const deleteVideo = async (videoId) => {
+    if (!confirm('Delete this video?')) return;
+    try {
+      await api.delete(`/videos/${videoId}/`, { data: { user_id: user.id } });
+      alert('Video deleted!');
+      fetchData();
+    } catch (error) {
+      alert('Failed to delete');
+    }
+  };
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FiList },
     { id: 'books', label: 'Manage Books', icon: FiBook },
     { id: 'authors', label: 'Manage Authors', icon: FiUsers },
     { id: 'poems', label: 'Manage Poems', icon: FiFileText },
+    { id: 'stories', label: 'Short Stories', icon: FiBookOpen },
+    { id: 'audiobooks', label: 'Audiobooks', icon: FiMusic },
+    { id: 'videos', label: 'Videos', icon: FiVideo },
   ];
 
   if (loading && books.length === 0) {
@@ -150,9 +264,14 @@ const AdminPanel = () => {
       <div className="flex space-x-1 sm:space-x-2 mb-4 sm:mb-6 overflow-x-auto scrollbar-hide">
         {tabs.map(tab => {
           const Icon = tab.icon;
+          const isActiveTab = activeTab === tab.id;
           return (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-colors text-sm sm:text-base ${activeTab === tab.id ? 'bg-primary text-white' : 'bg-white text-gray-700 hover:bg-orange-50 border border-primary'}`}>
+              className={`flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all text-sm sm:text-base ${
+                isActiveTab 
+                  ? 'bg-gradient-to-r from-primary to-orange-500 text-white shadow-lg transform scale-105' 
+                  : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-300 hover:border-primary'
+              }`}>
               <Icon size={16} className="sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">{tab.label}</span>
               <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
@@ -175,13 +294,6 @@ const AdminPanel = () => {
               </div>
               <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Total Authors</h3>
-                  <FiUsers className="text-primary" size={20} />
-                </div>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalAuthors}</p>
-              </div>
-              <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
-                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Total Poems</h3>
                   <FiFileText className="text-primary" size={20} />
                 </div>
@@ -189,26 +301,59 @@ const AdminPanel = () => {
               </div>
               <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Total Users</h3>
+                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Short Stories</h3>
+                  <FiBookOpen className="text-primary" size={20} />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalStories}</p>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Audiobooks</h3>
+                  <FiMusic className="text-primary" size={20} />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalAudiobooks}</p>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Videos</h3>
+                  <FiVideo className="text-primary" size={20} />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalVideos}</p>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Total Authors</h3>
                   <FiUsers className="text-primary" size={20} />
                 </div>
-                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalUsers}</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalAuthors}</p>
               </div>
             </div>
             <div className="bg-orange-50 border-2 border-primary rounded-lg p-4 sm:p-6 shadow-md">
               <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">Quick Actions</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 <button onClick={() => setShowBookModal(true)}
                   className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
-                  <FiPlus /><span>Add New Book</span>
-                </button>
-                <button onClick={() => setShowAuthorModal(true)}
-                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
-                  <FiPlus /><span>Add New Author</span>
+                  <FiPlus /><span>Add Book</span>
                 </button>
                 <button onClick={() => setShowPoemModal(true)}
                   className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
-                  <FiPlus /><span>Add New Poem</span>
+                  <FiPlus /><span>Add Poem</span>
+                </button>
+                <button onClick={() => setShowStoryModal(true)}
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                  <FiPlus /><span>Add Story</span>
+                </button>
+                <button onClick={() => setShowAudiobookModal(true)}
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                  <FiPlus /><span>Add Audiobook</span>
+                </button>
+                <button onClick={() => setShowVideoModal(true)}
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                  <FiPlus /><span>Add Video</span>
+                </button>
+                <button onClick={() => setShowAuthorModal(true)}
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                  <FiPlus /><span>Add Author</span>
                 </button>
               </div>
             </div>
@@ -280,11 +425,22 @@ const AdminPanel = () => {
                 {authors.map(author => (
                   <div key={author.id} className="bg-orange-50 rounded-lg p-3 sm:p-4 border-2 border-primary shadow-md">
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 flex-1 pr-2">{author.name}</h3>
-                      <button onClick={() => deleteAuthor(author.id)}
-                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500 flex-shrink-0">
-                        <FiTrash2 size={14} />
-                      </button>
+                      <div className="flex-1 pr-2">
+                        {author.photo_url && (
+                          <img src={author.photo_url} alt={author.name} className="w-16 h-16 object-cover rounded-lg border-2 border-primary mb-2" />
+                        )}
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800">{author.name}</h3>
+                      </div>
+                      <div className="flex space-x-2 flex-shrink-0">
+                        <button onClick={() => openEditAuthor(author)}
+                          className="p-2 bg-orange-100 text-orange-700 hover:bg-orange-200 rounded-lg transition-colors border-2 border-orange-500">
+                          <FiEdit size={14} />
+                        </button>
+                        <button onClick={() => deleteAuthor(author.id)}
+                          className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500">
+                          <FiTrash2 size={14} />
+                        </button>
+                      </div>
                     </div>
                     {author.bio && <p className="text-gray-600 text-sm line-clamp-2">{author.bio}</p>}
                   </div>
@@ -329,12 +485,128 @@ const AdminPanel = () => {
             )}
           </div>
         )}
+
+        {activeTab === 'stories' && (
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Manage Short Stories ({stories.length})</h2>
+              <button onClick={() => setShowStoryModal(true)}
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                <FiPlus /><span>Add Story</span>
+              </button>
+            </div>
+            {stories.length === 0 ? (
+              <div className="bg-orange-50 rounded-lg p-6 sm:p-8 text-center border-2 border-primary">
+                <FiBookOpen size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No stories found</p>
+              </div>
+            ) : (
+              <div className="space-y-3 sm:space-y-4">
+                {stories.map(story => (
+                  <div key={story.id} className="bg-orange-50 rounded-lg p-3 sm:p-4 border-2 border-primary shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-3 sm:space-y-0">
+                      <div className="flex-1">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">{story.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{story.content}</p>
+                        <p className="text-gray-500 text-xs">{story.author_name} • {story.genre} • {story.reading_time} min read</p>
+                      </div>
+                      <button onClick={() => deleteStory(story.id)}
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500 self-end sm:self-start flex-shrink-0">
+                        <FiTrash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'audiobooks' && (
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Manage Audiobooks ({audiobooks.length})</h2>
+              <button onClick={() => setShowAudiobookModal(true)}
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                <FiPlus /><span>Add Audiobook</span>
+              </button>
+            </div>
+            {audiobooks.length === 0 ? (
+              <div className="bg-orange-50 rounded-lg p-6 sm:p-8 text-center border-2 border-primary">
+                <FiMusic size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No audiobooks found</p>
+              </div>
+            ) : (
+              <div className="space-y-3 sm:space-y-4">
+                {audiobooks.map(audiobook => (
+                  <div key={audiobook.id} className="bg-orange-50 rounded-lg p-3 sm:p-4 border-2 border-primary shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-3 sm:space-y-0">
+                      <div className="flex-1">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">{audiobook.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{audiobook.description}</p>
+                        <p className="text-gray-500 text-xs">{audiobook.author_name} • Narrator: {audiobook.narrator || 'N/A'} • {audiobook.duration} min</p>
+                      </div>
+                      <button onClick={() => deleteAudiobook(audiobook.id)}
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500 self-end sm:self-start flex-shrink-0">
+                        <FiTrash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'videos' && (
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Manage Videos ({videos.length})</h2>
+              <button onClick={() => setShowVideoModal(true)}
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                <FiPlus /><span>Add Video</span>
+              </button>
+            </div>
+            {videos.length === 0 ? (
+              <div className="bg-orange-50 rounded-lg p-6 sm:p-8 text-center border-2 border-primary">
+                <FiVideo size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No videos found</p>
+              </div>
+            ) : (
+              <div className="space-y-3 sm:space-y-4">
+                {videos.map(video => (
+                  <div key={video.id} className="bg-orange-50 rounded-lg p-3 sm:p-4 border-2 border-primary shadow-md">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between space-y-3 sm:space-y-0">
+                      <div className="flex-1">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">{video.title}</h3>
+                        <p className="text-gray-600 text-sm mb-2 line-clamp-2">{video.description}</p>
+                        <p className="text-gray-500 text-xs">{video.author_name} • {video.category} • {video.duration} min</p>
+                      </div>
+                      <button onClick={() => deleteVideo(video.id)}
+                        className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500 self-end sm:self-start flex-shrink-0">
+                        <FiTrash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <AddBookModal show={showBookModal} onClose={() => setShowBookModal(false)} onSubmit={handleAddBook}
         authors={authors} categories={categories} genres={genres} />
       <AddAuthorModal show={showAuthorModal} onClose={() => setShowAuthorModal(false)} onSubmit={handleAddAuthor} />
+      <EditAuthorModal show={showEditAuthorModal} onClose={() => { setShowEditAuthorModal(false); setEditingAuthor(null); }} 
+        onSubmit={handleEditAuthor} author={editingAuthor} />
       <AddPoemModal show={showPoemModal} onClose={() => setShowPoemModal(false)} onSubmit={handleAddPoem}
+        authors={authors} />
+      <AddShortStoryModal show={showStoryModal} onClose={() => setShowStoryModal(false)} onSubmit={handleAddStory}
+        authors={authors} />
+      <AddAudiobookModal show={showAudiobookModal} onClose={() => setShowAudiobookModal(false)} onSubmit={handleAddAudiobook}
+        authors={authors} />
+      <AddVideoModal show={showVideoModal} onClose={() => setShowVideoModal(false)} onSubmit={handleAddVideo}
         authors={authors} />
     </div>
   );
