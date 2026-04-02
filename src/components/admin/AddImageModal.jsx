@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FiX, FiUpload } from 'react-icons/fi';
-import api from '../../services/api';
+import api, { uploadImage } from '../../services/api';
 
 const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
   const [formData, setFormData] = useState({
@@ -28,15 +28,20 @@ const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setUploading(true);
-    const data = new FormData();
-    data.append('file', file);
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select an image file');
+      return;
+    }
+
     try {
-      const res = await api.post('/upload-image/', data);
-      setFormData({ ...formData, image_url: res.data.url });
-      alert('Image uploaded!');
+      setUploading(true);
+      const result = await uploadImage(file);
+      setFormData({ ...formData, image_url: result.url });
+      alert('Image uploaded successfully!');
     } catch (error) {
-      alert('Upload failed');
+      console.error('Error uploading image:', error);
+      alert('Failed to upload image');
     } finally {
       setUploading(false);
     }
