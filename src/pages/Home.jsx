@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { FiBook, FiFileText, FiHeadphones, FiVideo, FiClock, FiUser, FiImage } from 'react-icons/fi';
+import { FiBook, FiFileText, FiHeadphones, FiVideo, FiClock, FiUser, FiImage, FiX } from 'react-icons/fi';
 
 const Home = () => {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, book, poem, story, audiobook, video, image
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     fetchFeed();
@@ -49,6 +50,19 @@ const Home = () => {
 
   const filteredFeed = filter === 'all' ? feed : feed.filter(item => item.type === filter);
 
+  const handleItemClick = (item) => {
+    if (item.type === 'image') {
+      setSelectedImage(item);
+    } else {
+      // Navigate to detail page for other types
+      if (item.type === 'book') {
+        window.location.href = `/book/${item.id}`;
+      } else if (item.type === 'poem') {
+        window.location.href = '/poems';
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -89,10 +103,10 @@ const Home = () => {
       {/* Feed Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {filteredFeed.map((item) => (
-          <Link
+          <div
             key={`${item.type}-${item.id}`}
-            to={item.type === 'book' ? `/book/${item.id}` : item.type === 'poem' ? '/poems' : '/home'}
-            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all border-2 border-orange-200 hover:border-primary overflow-hidden group"
+            onClick={() => handleItemClick(item)}
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all border-2 border-orange-200 hover:border-primary overflow-hidden group cursor-pointer"
           >
             {/* Cover Image */}
             {item.cover_image && (
@@ -132,7 +146,7 @@ const Home = () => {
                 <span>{new Date(item.created_at).toLocaleDateString()}</span>
               </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
 
@@ -140,6 +154,53 @@ const Home = () => {
       {filteredFeed.length === 0 && (
         <div className="text-center py-8 sm:py-12">
           <p className="text-gray-600 text-base sm:text-lg">No content found</p>
+        </div>
+      )}
+
+      {/* Image Viewer Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            onClick={() => setSelectedImage(null)}
+            className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors z-10"
+          >
+            <FiX size={24} />
+          </button>
+          
+          <div className="max-w-6xl max-h-[90vh] w-full flex flex-col">
+            {/* Image */}
+            <div className="flex-1 flex items-center justify-center mb-4">
+              <img
+                src={selectedImage.cover_image}
+                alt={selectedImage.title}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+            
+            {/* Image Info */}
+            <div 
+              className="bg-white/10 backdrop-blur-md rounded-xl p-4 sm:p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                {selectedImage.title}
+              </h2>
+              <div className="flex items-center space-x-4 text-white/80 text-sm sm:text-base">
+                <div className="flex items-center space-x-2">
+                  <FiUser size={16} />
+                  <span>{selectedImage.author_name}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FiClock size={16} />
+                  <span>{new Date(selectedImage.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
