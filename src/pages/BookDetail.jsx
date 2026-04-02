@@ -115,110 +115,110 @@ const BookDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-darker pb-20">
+    <div className="min-h-screen bg-darker pb-12 sm:pb-20">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-orange-200 shadow-md">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
             className="text-gray-700 hover:text-primary transition-colors"
           >
-            <FiArrowLeft size={24} />
+            <FiArrowLeft size={20} className="sm:w-6 sm:h-6" />
           </button>
-          <h1 className="text-lg font-bold text-gray-900">Book Details</h1>
+          <h1 className="text-base sm:text-lg font-bold text-gray-900">Book Details</h1>
           <button className="text-gray-700 hover:text-primary transition-colors">
-            <FiShare2 size={24} />
+            <FiShare2 size={20} className="sm:w-6 sm:h-6" />
           </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-3 sm:px-4 py-4 sm:py-6">
         {/* Book Cover */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-4 sm:mb-6">
           {book.cover_image_url ? (
             <img
               src={book.cover_image_url}
               alt={book.title}
-              className="w-48 md:w-64 rounded-2xl shadow-2xl"
+              className="w-40 sm:w-48 md:w-64 rounded-xl sm:rounded-2xl shadow-2xl"
             />
           ) : (
-            <div className="w-48 md:w-64 aspect-[2/3] bg-dark rounded-2xl flex items-center justify-center">
-              <span className="text-6xl">📚</span>
+            <div className="w-40 sm:w-48 md:w-64 aspect-[2/3] bg-dark rounded-xl sm:rounded-2xl flex items-center justify-center">
+              <span className="text-4xl sm:text-5xl md:text-6xl">📚</span>
             </div>
           )}
         </div>
 
         {/* Title */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-3">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 text-center mb-2 sm:mb-3 px-2">
           {book.title}
         </h2>
 
         {/* Author */}
         {book.author_name && (
-          <p className="text-lg text-primary text-center mb-4 italic font-semibold">
+          <p className="text-base sm:text-lg text-primary text-center mb-3 sm:mb-4 italic font-semibold">
             by {book.author_name}
           </p>
         )}
 
         {/* Rating */}
-        <div className="flex items-center justify-center space-x-2 mb-6">
+        <div className="flex items-center justify-center space-x-2 mb-4 sm:mb-6">
           <div className="flex items-center space-x-1">
             {[1, 2, 3, 4, 5].map(star => (
               <FiStar
                 key={star}
-                size={20}
-                className={star <= Math.round(book.average_rating || 0) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
+                size={16}
+                className={`sm:w-5 sm:h-5 ${star <= Math.round(book.average_rating || 0) ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}`}
               />
             ))}
           </div>
-          <span className="text-gray-900 font-semibold">
+          <span className="text-gray-900 font-semibold text-sm sm:text-base">
             {book.average_rating > 0 ? book.average_rating.toFixed(1) : '0.0'}
           </span>
-          <span className="text-gray-700">
+          <span className="text-gray-700 text-sm sm:text-base">
             ({book.review_count || 0} reviews)
           </span>
         </div>
 
         {/* Info Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
-            <p className="text-gray-600 text-sm mb-1 font-semibold">CATEGORY</p>
-            <p className="text-primary font-bold">{book.category_name || 'N/A'}</p>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
+          <div className="bg-orange-50 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-xs sm:text-sm mb-1 font-semibold">CATEGORY</p>
+            <p className="text-primary font-bold text-xs sm:text-sm md:text-base">{book.category_name || 'N/A'}</p>
           </div>
-          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
-            <p className="text-gray-600 text-sm mb-1 font-semibold">PAGES</p>
-            <p className="text-primary font-bold">{book.pages || '342'}</p>
+          <div className="bg-orange-50 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-xs sm:text-sm mb-1 font-semibold">PAGES</p>
+            <p className="text-primary font-bold text-xs sm:text-sm md:text-base">{book.pages || '342'}</p>
           </div>
-          <div className="bg-orange-50 rounded-xl p-4 text-center border-2 border-orange-200">
-            <p className="text-gray-600 text-sm mb-1 font-semibold">LANGUAGE</p>
-            <p className="text-primary font-bold">{book.language || 'Hindi'}</p>
+          <div className="bg-orange-50 rounded-lg sm:rounded-xl p-2 sm:p-4 text-center border-2 border-orange-200">
+            <p className="text-gray-600 text-xs sm:text-sm mb-1 font-semibold">LANGUAGE</p>
+            <p className="text-primary font-bold text-xs sm:text-sm md:text-base">{book.language || 'Hindi'}</p>
           </div>
         </div>
 
         {/* Synopsis */}
-        <div className="mb-8">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Synopsis</h3>
-          <p className="text-gray-800 leading-relaxed">
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4">Synopsis</h3>
+          <p className="text-gray-800 leading-relaxed text-sm sm:text-base">
             {book.description || 'No description available for this book.'}
           </p>
         </div>
 
         {/* Additional Info */}
         {(book.genre_display || book.published_year) && (
-          <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
             {book.genre_display && (
-              <span className="px-4 py-2 bg-orange-50 text-gray-800 rounded-full text-sm border-2 border-orange-200 font-semibold">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-50 text-gray-800 rounded-full text-xs sm:text-sm border-2 border-orange-200 font-semibold">
                 🎭 {book.genre_display}
               </span>
             )}
             {book.published_year && (
-              <span className="px-4 py-2 bg-orange-50 text-gray-800 rounded-full text-sm border-2 border-orange-200 font-semibold">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-orange-50 text-gray-800 rounded-full text-xs sm:text-sm border-2 border-orange-200 font-semibold">
                 📅 {book.published_year}
               </span>
             )}
             {book.is_paid && book.price && (
-              <span className="px-4 py-2 bg-success text-white rounded-full text-sm font-semibold">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-success text-white rounded-full text-xs sm:text-sm font-semibold">
                 ₹{book.price}
               </span>
             )}
@@ -226,86 +226,86 @@ const BookDetail = () => {
         )}
 
         {/* Action Buttons */}
-        <div className="space-y-3 mb-8">
+        <div className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
           <button
             onClick={openReader}
-            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 sm:py-4 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg text-sm sm:text-base"
           >
-            <span className="text-xl">📖</span>
-            <span className="text-lg">Read Now</span>
+            <span className="text-lg sm:text-xl">📖</span>
+            <span className="text-base sm:text-lg">Read Now</span>
           </button>
           
-          <div className="grid grid-cols-2 gap-3">
-            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md">
-              <FiBookmark size={18} />
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md text-sm sm:text-base">
+              <FiBookmark size={16} className="sm:w-[18px] sm:h-[18px]" />
               <span>Save</span>
             </button>
-            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md">
-              <FiDownload size={18} />
+            <button className="bg-orange-50 hover:bg-orange-100 text-gray-800 font-semibold py-2.5 sm:py-3 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-orange-200 shadow-md text-sm sm:text-base">
+              <FiDownload size={16} className="sm:w-[18px] sm:h-[18px]" />
               <span>Offline</span>
             </button>
           </div>
         </div>
 
         {/* Reviews Section */}
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-900">Reviews</h3>
+        <div className="mt-6 sm:mt-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Reviews</h3>
             <button
               onClick={() => setShowReviewModal(true)}
-              className="text-primary hover:text-orange-600 font-bold flex items-center space-x-1 bg-orange-50 px-4 py-2 rounded-lg border-2 border-primary shadow-md"
+              className="text-primary hover:text-orange-600 font-bold flex items-center justify-center space-x-1 bg-orange-50 px-3 sm:px-4 py-2 rounded-lg border-2 border-primary shadow-md text-sm sm:text-base"
             >
-              <FiStar size={18} />
+              <FiStar size={16} className="sm:w-[18px] sm:h-[18px]" />
               <span>{userReview ? 'Edit Review' : 'Write Review'}</span>
             </button>
           </div>
 
           {/* User's Review */}
           {userReview && (
-            <div className="bg-orange-50 border-2 border-primary p-4 rounded-xl mb-4 shadow-md">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-primary font-bold">Your Review</span>
+            <div className="bg-orange-50 border-2 border-primary p-3 sm:p-4 rounded-lg sm:rounded-xl mb-3 sm:mb-4 shadow-md">
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <span className="text-primary font-bold text-sm sm:text-base">Your Review</span>
                 <button
                   onClick={handleDeleteReview}
                   className="text-red-600 hover:text-red-700 flex items-center space-x-1"
                 >
-                  <FiTrash2 size={16} />
+                  <FiTrash2 size={14} className="sm:w-4 sm:h-4" />
                 </button>
               </div>
               <div className="flex items-center space-x-1 mb-2">
                 {[1, 2, 3, 4, 5].map(star => (
                   <FiStar
                     key={star}
-                    size={16}
-                    className={star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
+                    size={14}
+                    className={`sm:w-4 sm:h-4 ${star <= userReview.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}`}
                   />
                 ))}
               </div>
               {userReview.comment && (
-                <p className="text-gray-800 text-sm">{userReview.comment}</p>
+                <p className="text-gray-800 text-xs sm:text-sm">{userReview.comment}</p>
               )}
             </div>
           )}
 
           {/* All Reviews */}
           {reviews.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2 sm:space-y-3">
               {reviews.map(review => (
-                <div key={review.id} className="bg-white p-4 rounded-xl border-2 border-orange-200 shadow-md">
+                <div key={review.id} className="bg-white p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 border-orange-200 shadow-md">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-gray-900 font-bold text-sm">{review.user_name}</span>
+                    <span className="text-gray-900 font-bold text-xs sm:text-sm">{review.user_name}</span>
                     <div className="flex items-center space-x-1">
                       {[1, 2, 3, 4, 5].map(star => (
                         <FiStar
                           key={star}
-                          size={12}
-                          className={star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}
+                          size={10}
+                          className={`sm:w-3 sm:h-3 ${star <= review.rating ? 'fill-yellow-500 text-yellow-500' : 'text-gray-400'}`}
                         />
                       ))}
                     </div>
                   </div>
                   {review.comment && (
-                    <p className="text-gray-800 text-sm mb-2">{review.comment}</p>
+                    <p className="text-gray-800 text-xs sm:text-sm mb-2">{review.comment}</p>
                   )}
                   <p className="text-gray-600 text-xs">
                     {new Date(review.created_at).toLocaleDateString()}
@@ -314,8 +314,8 @@ const BookDetail = () => {
               ))}
             </div>
           ) : (
-            <div className="bg-white p-8 rounded-xl text-center border-2 border-orange-200">
-              <p className="text-gray-600">No reviews yet. Be the first to review!</p>
+            <div className="bg-white p-6 sm:p-8 rounded-lg sm:rounded-xl text-center border-2 border-orange-200">
+              <p className="text-gray-600 text-sm sm:text-base">No reviews yet. Be the first to review!</p>
             </div>
           )}
         </div>
