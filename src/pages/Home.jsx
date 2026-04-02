@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { FiBook, FiFileText, FiHeadphones, FiVideo, FiClock, FiUser } from 'react-icons/fi';
+import { FiBook, FiFileText, FiHeadphones, FiVideo, FiClock, FiUser, FiImage } from 'react-icons/fi';
 
 const Home = () => {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all'); // all, book, poem, story, audiobook, video
+  const [filter, setFilter] = useState('all'); // all, book, poem, story, audiobook, video, image
 
   useEffect(() => {
     fetchFeed();
@@ -30,6 +30,7 @@ const Home = () => {
       case 'story': return <FiFileText className="text-orange-500" size={24} />;
       case 'audiobook': return <FiHeadphones className="text-primary" size={24} />;
       case 'video': return <FiVideo className="text-orange-600" size={24} />;
+      case 'image': return <FiImage className="text-primary" size={24} />;
       default: return <FiBook size={24} />;
     }
   };
@@ -41,6 +42,7 @@ const Home = () => {
       case 'story': return 'Short Story';
       case 'audiobook': return 'Audiobook';
       case 'video': return 'Video';
+      case 'image': return 'Image';
       default: return type;
     }
   };
@@ -69,7 +71,7 @@ const Home = () => {
 
       {/* Filter Buttons */}
       <div className="mb-8 flex flex-wrap gap-3">
-        {['all', 'book', 'poem', 'story', 'audiobook', 'video'].map(type => (
+        {['all', 'book', 'poem', 'story', 'audiobook', 'video', 'image'].map(type => (
           <button
             key={type}
             onClick={() => setFilter(type)}

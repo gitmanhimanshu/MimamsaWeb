@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
-import { FiBook, FiUsers, FiFileText, FiList, FiTrash2, FiEye, FiEyeOff, FiPlus, FiMusic, FiVideo, FiBookOpen, FiEdit } from 'react-icons/fi';
+import { FiBook, FiUsers, FiFileText, FiList, FiTrash2, FiEye, FiEyeOff, FiPlus, FiMusic, FiVideo, FiBookOpen, FiEdit, FiImage } from 'react-icons/fi';
 import AddBookModal from '../components/admin/AddBookModal';
 import AddAuthorModal from '../components/admin/AddAuthorModal';
 import EditAuthorModal from '../components/admin/EditAuthorModal';
@@ -9,6 +9,7 @@ import AddPoemModal from '../components/admin/AddPoemModal';
 import AddShortStoryModal from '../components/admin/AddShortStoryModal';
 import AddAudiobookModal from '../components/admin/AddAudiobookModal';
 import AddVideoModal from '../components/admin/AddVideoModal';
+import AddImageModal from '../components/admin/AddImageModal';
 
 const AdminPanel = () => {
   const { user } = useAuth();
@@ -19,10 +20,11 @@ const AdminPanel = () => {
   const [stories, setStories] = useState([]);
   const [audiobooks, setAudiobooks] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [images, setImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [stats, setStats] = useState({ totalBooks: 0, totalAuthors: 0, totalPoems: 0, totalStories: 0, totalAudiobooks: 0, totalVideos: 0 });
+  const [stats, setStats] = useState({ totalBooks: 0, totalAuthors: 0, totalPoems: 0, totalStories: 0, totalAudiobooks: 0, totalVideos: 0, totalImages: 0 });
   const [showBookModal, setShowBookModal] = useState(false);
   const [showAuthorModal, setShowAuthorModal] = useState(false);
   const [showEditAuthorModal, setShowEditAuthorModal] = useState(false);
@@ -31,6 +33,7 @@ const AdminPanel = () => {
   const [showStoryModal, setShowStoryModal] = useState(false);
   const [showAudiobookModal, setShowAudiobookModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -52,13 +55,14 @@ const AdminPanel = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [booksRes, authorsRes, poemsRes, storiesRes, audiobooksRes, videosRes] = await Promise.all([
+      const [booksRes, authorsRes, poemsRes, storiesRes, audiobooksRes, videosRes, imagesRes] = await Promise.all([
         api.get('/books/?show_all=true'), 
         api.get('/authors/'), 
         api.get('/poems/'),
         api.get('/stories/'),
         api.get('/audiobooks/'),
-        api.get('/videos/')
+        api.get('/videos/'),
+        api.get('/images/')
       ]);
       setBooks(booksRes.data);
       setAuthors(authorsRes.data);
@@ -66,13 +70,15 @@ const AdminPanel = () => {
       setStories(storiesRes.data);
       setAudiobooks(audiobooksRes.data);
       setVideos(videosRes.data);
+      setImages(imagesRes.data);
       setStats({ 
         totalBooks: booksRes.data.length, 
         totalAuthors: authorsRes.data.length, 
         totalPoems: poemsRes.data.length,
         totalStories: storiesRes.data.length,
         totalAudiobooks: audiobooksRes.data.length,
-        totalVideos: videosRes.data.length
+        totalVideos: videosRes.data.length,
+        totalImages: imagesRes.data.length
       });
     } catch (error) {
       console.error('Error:', error);
@@ -166,6 +172,17 @@ const AdminPanel = () => {
     }
   };
 
+  const handleAddImage = async (formData) => {
+    try {
+      await api.post('/images/', { ...formData, user_id: user.id });
+      alert('Image added successfully!');
+      setShowImageModal(false);
+      fetchData();
+    } catch (error) {
+      alert('Failed to add image');
+    }
+  };
+
   const toggleBookStatus = async (bookId, currentStatus) => {
     if (!confirm(`${currentStatus ? 'Deactivate' : 'Activate'} this book?`)) return;
     try {
@@ -244,6 +261,17 @@ const AdminPanel = () => {
     }
   };
 
+  const deleteImage = async (imageId) => {
+    if (!confirm('Delete this image?')) return;
+    try {
+      await api.delete(`/images/${imageId}/`, { data: { user_id: user.id } });
+      alert('Image deleted!');
+      fetchData();
+    } catch (error) {
+      alert('Failed to delete');
+    }
+  };
+
   const tabs = [
     { id: 'overview', label: 'Overview', icon: FiList },
     { id: 'books', label: 'Manage Books', icon: FiBook },
@@ -252,6 +280,7 @@ const AdminPanel = () => {
     { id: 'stories', label: 'Short Stories', icon: FiBookOpen },
     { id: 'audiobooks', label: 'Audiobooks', icon: FiMusic },
     { id: 'videos', label: 'Videos', icon: FiVideo },
+    { id: 'images', label: 'Images', icon: FiImage },
   ];
 
   if (loading && books.length === 0) {
@@ -322,6 +351,13 @@ const AdminPanel = () => {
               </div>
               <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
                 <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Images</h3>
+                  <FiImage className="text-primary" size={20} />
+                </div>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-800">{stats.totalImages}</p>
+              </div>
+              <div className="bg-orange-50 rounded-lg p-3 sm:p-6 border-2 border-primary shadow-md">
+                <div className="flex items-center justify-between mb-2">
                   <h3 className="text-gray-600 font-semibold text-xs sm:text-sm">Total Authors</h3>
                   <FiUsers className="text-primary" size={20} />
                 </div>
@@ -350,6 +386,10 @@ const AdminPanel = () => {
                 <button onClick={() => setShowVideoModal(true)}
                   className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
                   <FiPlus /><span>Add Video</span>
+                </button>
+                <button onClick={() => setShowImageModal(true)}
+                  className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                  <FiPlus /><span>Add Image</span>
                 </button>
                 <button onClick={() => setShowAuthorModal(true)}
                   className="bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
@@ -593,6 +633,46 @@ const AdminPanel = () => {
             )}
           </div>
         )}
+
+        {activeTab === 'images' && (
+          <div>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Manage Images ({images.length})</h2>
+              <button onClick={() => setShowImageModal(true)}
+                className="bg-primary hover:bg-orange-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 shadow-md text-sm sm:text-base">
+                <FiPlus /><span>Add Image</span>
+              </button>
+            </div>
+            {images.length === 0 ? (
+              <div className="bg-orange-50 rounded-lg p-6 sm:p-8 text-center border-2 border-primary">
+                <FiImage size={48} className="mx-auto mb-4 text-primary" />
+                <p className="text-gray-600">No images found</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {images.map(image => (
+                  <div key={image.id} className="bg-orange-50 rounded-lg overflow-hidden border-2 border-primary shadow-md">
+                    {image.image_url && (
+                      <img src={image.image_url} alt={image.title} className="w-full h-48 object-cover" />
+                    )}
+                    <div className="p-3">
+                      <h3 className="text-base font-semibold text-gray-800 mb-1 line-clamp-1">{image.title}</h3>
+                      <p className="text-gray-600 text-xs mb-2 line-clamp-2">{image.description}</p>
+                      <p className="text-gray-500 text-xs mb-2">{image.author_name || 'No author'} • {image.category}</p>
+                      {image.tags && (
+                        <p className="text-orange-600 text-xs mb-2">🏷️ {image.tags}</p>
+                      )}
+                      <button onClick={() => deleteImage(image.id)}
+                        className="w-full p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors border-2 border-red-500 text-sm font-semibold">
+                          Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <AddBookModal show={showBookModal} onClose={() => setShowBookModal(false)} onSubmit={handleAddBook}
@@ -607,6 +687,8 @@ const AdminPanel = () => {
       <AddAudiobookModal show={showAudiobookModal} onClose={() => setShowAudiobookModal(false)} onSubmit={handleAddAudiobook}
         authors={authors} />
       <AddVideoModal show={showVideoModal} onClose={() => setShowVideoModal(false)} onSubmit={handleAddVideo}
+        authors={authors} />
+      <AddImageModal show={showImageModal} onClose={() => setShowImageModal(false)} onSubmit={handleAddImage}
         authors={authors} />
     </div>
   );
