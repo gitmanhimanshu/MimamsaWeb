@@ -58,24 +58,24 @@ const Home = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent mb-4">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent mb-3 sm:mb-4">
           📚 Discover Literature
         </h1>
-        <p className="text-gray-700 text-lg">
+        <p className="text-gray-700 text-sm sm:text-base md:text-lg">
           Explore books, poems, stories, audiobooks, and videos - all in one place
         </p>
       </div>
 
       {/* Filter Buttons */}
-      <div className="mb-8 flex flex-wrap gap-3">
+      <div className="mb-6 sm:mb-8 flex flex-wrap gap-2 sm:gap-3">
         {['all', 'book', 'poem', 'story', 'audiobook', 'video', 'image'].map(type => (
           <button
             key={type}
             onClick={() => setFilter(type)}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md ${
+            className={`px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold transition-all shadow-md ${
               filter === type
                 ? 'bg-primary text-white shadow-lg transform scale-105'
                 : 'bg-white text-gray-700 hover:bg-orange-50'
@@ -87,7 +87,7 @@ const Home = () => {
       </div>
 
       {/* Feed Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {filteredFeed.map((item) => (
           <Link
             key={`${item.type}-${item.id}`}
@@ -96,7 +96,7 @@ const Home = () => {
           >
             {/* Cover Image */}
             {item.cover_image && (
-              <div className="h-48 overflow-hidden bg-orange-100">
+              <div className="h-40 sm:h-48 overflow-hidden bg-orange-100">
                 <img
                   src={item.cover_image}
                   alt={item.title}
@@ -106,29 +106,29 @@ const Home = () => {
             )}
             
             {/* Content */}
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {/* Type Badge */}
               <div className="flex items-center space-x-2 mb-2">
                 {getIcon(item.type)}
-                <span className="text-sm font-semibold text-gray-600">
+                <span className="text-xs sm:text-sm font-semibold text-gray-600">
                   {getTypeLabel(item.type)}
                 </span>
               </div>
 
               {/* Title */}
-              <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+              <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                 {item.title}
               </h3>
 
               {/* Author */}
               <div className="flex items-center space-x-2 text-gray-600 mb-2">
-                <FiUser size={16} />
-                <span className="text-sm">{item.author_name}</span>
+                <FiUser size={14} className="sm:w-4 sm:h-4" />
+                <span className="text-xs sm:text-sm">{item.author_name}</span>
               </div>
 
               {/* Date */}
-              <div className="flex items-center space-x-2 text-gray-500 text-sm">
-                <FiClock size={14} />
+              <div className="flex items-center space-x-2 text-gray-500 text-xs sm:text-sm">
+                <FiClock size={12} className="sm:w-3.5 sm:h-3.5" />
                 <span>{new Date(item.created_at).toLocaleDateString()}</span>
               </div>
             </div>
@@ -138,8 +138,8 @@ const Home = () => {
 
       {/* Empty State */}
       {filteredFeed.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-600 text-lg">No content found</p>
+        <div className="text-center py-8 sm:py-12">
+          <p className="text-gray-600 text-base sm:text-lg">No content found</p>
         </div>
       )}
     </div>

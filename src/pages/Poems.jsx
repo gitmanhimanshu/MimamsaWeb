@@ -353,27 +353,27 @@ const Poems = () => {
 
   // Poems List View
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary via-orange-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
           ✨ कविताएँ (Poems) ✨
         </h1>
         <button
           onClick={() => setShowAddPoemModal(true)}
-          className="bg-primary hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-xl transition-colors flex items-center space-x-2 shadow-lg"
+          className="bg-primary hover:bg-orange-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg text-sm sm:text-base"
         >
-          <FiEdit3 size={20} />
+          <FiEdit3 size={18} className="sm:w-5 sm:h-5" />
           <span>Write Your Poem</span>
         </button>
       </div>
 
       {/* Welcome Banner */}
-      <div className="mb-8 bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 border-2 border-primary rounded-2xl p-6 shadow-lg">
+      <div className="mb-6 sm:mb-8 bg-gradient-to-r from-orange-100 via-orange-50 to-orange-100 border-2 border-primary rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-2">
             🌟 Welcome to the Poetry World! 🌟
           </h2>
-          <p className="text-gray-700 text-lg">
+          <p className="text-gray-700 text-sm sm:text-base md:text-lg">
             Discover beautiful poems, share your creativity, and connect with fellow poetry lovers
           </p>
         </div>
@@ -381,25 +381,25 @@ const Poems = () => {
 
       {/* My Poems Section */}
       {myPoems.length > 0 && (
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <button
             onClick={() => {
               setShowMyPoems(!showMyPoems);
               setSelectedCategory(null);
             }}
-            className="w-full bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all border-2 border-orange-200 hover:border-primary"
+            className="w-full bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-all border-2 border-orange-200 hover:border-primary"
           >
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-2xl">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-primary rounded-full flex items-center justify-center text-xl sm:text-2xl">
                   ✍️
                 </div>
                 <div className="text-left">
-                  <h3 className="text-xl font-bold text-primary">My Poems</h3>
-                  <p className="text-gray-600">{myPoems.length} poems written by you</p>
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">My Poems</h3>
+                  <p className="text-gray-600 text-xs sm:text-sm md:text-base">{myPoems.length} poems written by you</p>
                 </div>
               </div>
-              <span className="text-2xl text-primary font-bold">
+              <span className="text-xl sm:text-2xl text-primary font-bold">
                 {showMyPoems ? '▼' : '▶'}
               </span>
             </div>
@@ -409,12 +409,12 @@ const Poems = () => {
 
       {/* Categories */}
       {!showMyPoems && (
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">श्रेणियाँ</h2>
-          <div className="flex flex-wrap gap-3">
+        <div className="mb-4 sm:mb-6">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">श्रेणियाँ</h2>
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                 !selectedCategory
                   ? 'bg-primary text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-orange-50'
@@ -426,7 +426,7 @@ const Poems = () => {
               <button
                 key={cat.value}
                 onClick={() => setSelectedCategory(cat.value)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors flex items-center space-x-2 shadow-sm ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors flex items-center space-x-1 sm:space-x-2 shadow-sm ${
                   selectedCategory === cat.value
                     ? 'bg-primary text-white shadow-md'
                     : 'bg-white text-gray-700 hover:bg-orange-50'
@@ -442,15 +442,15 @@ const Poems = () => {
 
       {/* Genres */}
       {!showMyPoems && (
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-            <FiFilter />
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center space-x-2">
+            <FiFilter size={18} className="sm:w-5 sm:h-5" />
             <span>विधाएँ (Genres)</span>
           </h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             <button
               onClick={() => setSelectedGenre(null)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm ${
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                 !selectedGenre
                   ? 'bg-primary text-white shadow-md'
                   : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
@@ -462,7 +462,7 @@ const Poems = () => {
               <button
                 key={genre.value}
                 onClick={() => setSelectedGenre(genre.value)}
-                className={`px-4 py-2 rounded-lg font-semibold transition-colors shadow-sm ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                   selectedGenre === genre.value
                     ? 'bg-primary text-white shadow-md'
                     : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
@@ -477,7 +477,7 @@ const Poems = () => {
 
       {/* Poems Grid */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
           {showMyPoems
             ? 'मेरी कविताएँ'
             : selectedCategory && selectedGenre
@@ -490,43 +490,43 @@ const Poems = () => {
         </h2>
         
         {getFilteredPoems().length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl shadow-md">
-            <p className="text-6xl mb-4">📝</p>
-            <p className="text-gray-600 text-lg">कोई कविता नहीं मिली</p>
+          <div className="text-center py-12 sm:py-20 bg-white rounded-lg sm:rounded-xl shadow-md">
+            <p className="text-4xl sm:text-5xl md:text-6xl mb-4">📝</p>
+            <p className="text-gray-600 text-base sm:text-lg">कोई कविता नहीं मिली</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {getFilteredPoems().map(poem => (
               <div
                 key={poem.id}
                 onClick={() => setSelectedPoem(poem)}
-                className="bg-white rounded-xl p-6 border-2 border-orange-100 hover:border-primary transition-all cursor-pointer hover:transform hover:scale-105 shadow-md hover:shadow-xl"
+                className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 border-2 border-orange-100 hover:border-primary transition-all cursor-pointer hover:transform hover:scale-105 shadow-md hover:shadow-xl"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-800 flex-1 line-clamp-2">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 flex-1 line-clamp-2">
                     {poem.title}
                   </h3>
                   {poem.category_icon && (
-                    <span className="text-2xl ml-2">{poem.category_icon}</span>
+                    <span className="text-xl sm:text-2xl ml-2">{poem.category_icon}</span>
                   )}
                 </div>
                 
-                <p className="text-gray-600 mb-4 line-clamp-3">
+                <p className="text-gray-600 mb-3 sm:mb-4 line-clamp-3 text-sm sm:text-base">
                   {poem.content}
                 </p>
                 
-                <div className="flex items-center justify-between pt-4 border-t border-orange-100">
+                <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-orange-100">
                   <div>
                     {poem.author_name ? (
                       <>
                         <p className="text-xs text-gray-500">Written by</p>
-                        <p className="text-primary font-semibold">{poem.author_name}</p>
+                        <p className="text-primary font-semibold text-sm sm:text-base">{poem.author_name}</p>
                       </>
                     ) : (
-                      <p className="text-primary font-semibold">Anonymous</p>
+                      <p className="text-primary font-semibold text-sm sm:text-base">Anonymous</p>
                     )}
                   </div>
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-gray-500 text-xs sm:text-sm">
                     {new Date(poem.created_at).toLocaleDateString('en-IN')}
                   </p>
                 </div>

@@ -66,27 +66,27 @@ const Profile = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Profile</h1>
+    <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">My Profile</h1>
 
-      <div className="bg-white rounded-2xl p-6 border-2 border-orange-200 shadow-lg">
+      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-orange-200 shadow-lg">
         {/* Profile Photo */}
-        <div className="flex flex-col items-center mb-8">
+        <div className="flex flex-col items-center mb-6 sm:mb-8">
           <div className="relative">
             {formData.profile_photo ? (
               <img
                 src={formData.profile_photo}
                 alt="Profile"
-                className="w-32 h-32 rounded-full object-cover border-4 border-primary shadow-lg"
+                className="w-24 h-24 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-primary shadow-lg"
               />
             ) : (
-              <div className="w-32 h-32 rounded-full bg-primary flex items-center justify-center border-4 border-primary shadow-lg">
-                <FiUser size={48} className="text-white" />
+              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-primary flex items-center justify-center border-4 border-primary shadow-lg">
+                <FiUser size={40} className="sm:w-12 sm:h-12 text-white" />
               </div>
             )}
             
             <label className="absolute bottom-0 right-0 bg-primary hover:bg-orange-600 text-white p-2 rounded-full cursor-pointer transition-colors shadow-lg">
-              <FiCamera size={20} />
+              <FiCamera size={16} className="sm:w-5 sm:h-5" />
               <input
                 type="file"
                 accept="image/*"
@@ -98,14 +98,14 @@ const Profile = () => {
           </div>
           
           {uploading && (
-            <p className="text-gray-600 text-sm mt-2 font-semibold">Uploading...</p>
+            <p className="text-gray-600 text-xs sm:text-sm mt-2 font-semibold">Uploading...</p>
           )}
         </div>
 
         {/* Message */}
         {message.text && (
           <div
-            className={`mb-6 p-4 rounded-xl font-semibold ${
+            className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold ${
               message.type === 'success'
                 ? 'bg-green-100 border-2 border-green-500 text-green-700'
                 : 'bg-red-100 border-2 border-red-500 text-red-700'
@@ -116,19 +116,19 @@ const Profile = () => {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Username */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
               Username
             </label>
             <div className="relative">
-              <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-orange-50 border-2 border-orange-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -136,16 +136,16 @@ const Profile = () => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">
               Email
             </label>
             <div className="relative">
-              <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+              <FiMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4 sm:w-5 sm:h-5" />
               <input
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-orange-50 border-2 border-orange-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -153,8 +153,8 @@ const Profile = () => {
 
           {/* Admin Badge */}
           {user?.is_admin && (
-            <div className="bg-orange-100 border-2 border-primary rounded-xl p-4">
-              <p className="text-primary font-bold flex items-center space-x-2">
+            <div className="bg-orange-100 border-2 border-primary rounded-lg sm:rounded-xl p-3 sm:p-4">
+              <p className="text-primary font-bold flex items-center space-x-2 text-sm sm:text-base">
                 <span>⚙️</span>
                 <span>Admin Account</span>
               </p>
@@ -165,9 +165,9 @@ const Profile = () => {
           <button
             type="submit"
             disabled={saving || uploading}
-            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
           >
-            <FiSave />
+            <FiSave size={16} className="sm:w-5 sm:h-5" />
             <span>{saving ? 'Saving...' : 'Save Changes'}</span>
           </button>
         </form>
