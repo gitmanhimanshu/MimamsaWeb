@@ -1,10 +1,12 @@
-import { FiX } from 'react-icons/fi';
+import { FiX, FiUpload } from 'react-icons/fi';
 import { useState } from 'react';
 
 const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
   const [form, setForm] = useState({
-    title: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: ''
+    title: '', description: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: ''
   });
+  const [uploading, setUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState('');
 
   // Static categories
   const categories = [
@@ -27,10 +29,38 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
     { value: 'free_verse', label: 'Free Verse' }
   ];
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'punch_data');
+    formData.append('cloud_name', 'dbizsbr3w');
+
+    try {
+      const response = await fetch('https://api.cloudinary.com/v1_1/dbizsbr3w/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+      setForm({ ...form, background_image_url: data.secure_url });
+      setImagePreview(data.secure_url);
+      alert('Image uploaded successfully!');
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(form);
-    setForm({ title: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: '' });
+    setForm({ title: '', description: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: '' });
+    setImagePreview('');
   };
 
   if (!show) return null;
@@ -45,8 +75,34 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="text" placeholder="Poem Title *" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}
             className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" required />
+          
+          <textarea placeholder="Short Description (optional)" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}
+            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" rows="2" />
+          
           <textarea placeholder="Poem Content *" value={form.content} onChange={(e) => setForm({...form, content: e.target.value})}
             className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" rows="8" required />
+          
+          {/* Image Upload */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Cover Image (optional)</label>
+            <div className="flex items-center space-x-4">
+              <label className="flex-1 cursor-pointer">
+                <div className="flex items-center justify-center space-x-2 px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg hover:bg-orange-100 transition-colors">
+                  <FiUpload />
+                  <span className="text-sm font-semibold text-gray-700">
+                    {uploading ? 'Uploading...' : 'Upload Image'}
+                  </span>
+                </div>
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} />
+              </label>
+            </div>
+            {imagePreview && (
+              <div className="mt-3">
+                <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg border-2 border-primary" />
+              </div>
+            )}
+          </div>
+
           <select value={form.author} onChange={(e) => setForm({...form, author: e.target.value})}
             className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
             <option value="">Select Author</option>
@@ -62,8 +118,8 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
             <option value="">Select Genre</option>
             {genres.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
-          <button type="submit"
-            className="w-full bg-primary hover:bg-orange-600 text-white py-3 rounded-lg font-semibold shadow-md">
+          <button type="submit" disabled={uploading}
+            className="w-full bg-primary hover:bg-orange-600 text-white py-3 rounded-lg font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
             Add Poem
           </button>
         </form>
