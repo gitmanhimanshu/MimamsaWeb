@@ -189,10 +189,6 @@ const Home = () => {
     <div className="pb-16 lg:pb-0">
       {/* Header - Twitter Style */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-10">
-        <div className="px-3 sm:px-4 py-2.5 sm:py-3">
-          <h1 className="text-lg sm:text-xl font-bold text-gray-900">Home</h1>
-        </div>
-        
         {/* Tabs */}
         <div className="flex border-b border-gray-200 overflow-x-auto scrollbar-hide">
           {['all', 'book', 'poem', 'story', 'audiobook', 'video', 'image'].map(type => (
@@ -218,9 +214,9 @@ const Home = () => {
         {filteredFeed.map((item) => (
           <article
             key={`${item.type}-${item.id}`}
-            className="px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-gray-50/50 transition-colors cursor-pointer"
+            className="px-2 sm:px-3 py-2.5 sm:py-3 hover:bg-gray-50/50 transition-colors cursor-pointer"
           >
-            <div className="flex space-x-2 sm:space-x-3">
+            <div className="flex space-x-2">
               {/* Avatar */}
               <div className="flex-shrink-0">
                 {item.author_photo ? (

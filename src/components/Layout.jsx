@@ -164,9 +164,9 @@ const Layout = ({ children }) => {
 
       <div className="lg:max-w-7xl lg:mx-auto lg:flex">
         {/* Desktop Left Sidebar */}
-        <aside className="hidden lg:block w-20 xl:w-64 h-screen sticky top-0 border-r border-gray-200 flex-col">
+        <aside className="hidden lg:block w-16 xl:w-56 h-screen sticky top-0 border-r border-gray-200 flex-col">
           {/* Logo */}
-          <div className="p-4 xl:p-6">
+          <div className="p-2 xl:p-4">
             <Link to="/home" className="flex items-center justify-center xl:justify-start space-x-3">
               <img 
                 src="/logo.png" 
@@ -180,33 +180,33 @@ const Layout = ({ children }) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-2 xl:px-4 space-y-1">
+          <nav className="flex-1 px-1 xl:px-3 space-y-1">
             {menuItems.map((item) => (
               <Link
                 key={item.path + item.label}
                 to={item.path}
-                className={`flex items-center justify-center xl:justify-start space-x-4 px-4 py-3 rounded-full font-semibold text-lg transition-all ${
+                className={`flex items-center justify-center xl:justify-start space-x-4 px-2 xl:px-4 py-2.5 xl:py-3 rounded-full font-semibold text-base xl:text-lg transition-all ${
                   isActive(item.path)
                     ? 'bg-orange-50 text-primary'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
               >
-                <item.icon size={26} />
+                <item.icon size={22} className="xl:w-[26px] xl:h-[26px]" />
                 <span className="hidden xl:block">{item.label}</span>
               </Link>
             ))}
 
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center xl:justify-start space-x-4 px-4 py-3 rounded-full text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all font-semibold text-lg"
+              className="w-full flex items-center justify-center xl:justify-start space-x-4 px-2 xl:px-4 py-2.5 xl:py-3 rounded-full text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all font-semibold text-base xl:text-lg"
             >
-              <FiLogOut size={26} />
+              <FiLogOut size={22} className="xl:w-[26px] xl:h-[26px]" />
               <span className="hidden xl:block">Logout</span>
             </button>
           </nav>
 
           {/* User Profile */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-2 xl:p-4 border-t border-gray-200">
             <Link to="/profile" className="flex items-center justify-center xl:justify-start space-x-3 hover:bg-gray-100 rounded-full p-2 transition-colors">
               {user?.profile_photo ? (
                 <img
@@ -228,12 +228,12 @@ const Layout = ({ children }) => {
         </aside>
 
         {/* Main Content - Center Feed */}
-        <main className="flex-1 min-h-screen lg:border-r border-gray-200 lg:max-w-2xl">
+        <main className="flex-1 min-h-screen lg:border-r border-gray-200 lg:max-w-3xl">
           {children}
         </main>
 
         {/* Right Sidebar - Trending/Stats */}
-        <aside className="hidden xl:block w-80 2xl:w-96 h-screen sticky top-0 p-4">
+        <aside className="hidden xl:block w-72 2xl:w-80 h-screen sticky top-0 p-4">
           <div className="bg-gray-50 rounded-2xl p-4 mb-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">What's happening</h2>
             <div className="space-y-4">

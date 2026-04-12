@@ -151,7 +151,7 @@ const LandingPage = () => {
 
       <div className="max-w-7xl mx-auto lg:flex">
         {/* Left Sidebar - Desktop Only */}
-        <aside className="hidden lg:block w-64 xl:w-80 border-r border-gray-200 min-h-screen sticky top-16">
+        <aside className="hidden lg:block w-56 xl:w-64 border-r border-gray-200 min-h-screen sticky top-16">
           <div className="p-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Categories</h2>
             <div className="space-y-1">
@@ -173,7 +173,7 @@ const LandingPage = () => {
         </aside>
 
         {/* Main Feed */}
-        <main className="flex-1 min-h-screen lg:border-r border-gray-200 lg:max-w-2xl">
+        <main className="flex-1 min-h-screen lg:border-r border-gray-200 lg:max-w-3xl">
           {/* Mobile Filter Tabs */}
           <div className="lg:hidden sticky top-14 sm:top-16 bg-white/95 backdrop-blur-md border-b border-gray-200 z-10">
             <div className="flex overflow-x-auto scrollbar-hide">
@@ -200,9 +200,9 @@ const LandingPage = () => {
               <article
                 key={`${item.type}-${item.id}`}
                 onClick={handleContentClick}
-                className="px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-gray-50/50 transition-colors cursor-pointer"
+                className="px-2 sm:px-3 py-2.5 sm:py-3 hover:bg-gray-50/50 transition-colors cursor-pointer"
               >
-                <div className="flex space-x-2 sm:space-x-3">
+                <div className="flex space-x-2">
                   {/* Avatar */}
                   <div className="flex-shrink-0">
                     {item.author_photo ? (
@@ -282,7 +282,7 @@ const LandingPage = () => {
         </main>
 
         {/* Right Sidebar - Desktop Only */}
-        <aside className="hidden xl:block w-80 2xl:w-96 min-h-screen sticky top-16 p-4">
+        <aside className="hidden xl:block w-72 2xl:w-80 min-h-screen sticky top-16 p-4">
           <div className="bg-gray-50 rounded-2xl p-4 mb-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Join Mimanasa</h2>
             <p className="text-sm text-gray-600 mb-4">
