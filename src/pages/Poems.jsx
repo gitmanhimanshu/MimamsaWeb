@@ -189,8 +189,19 @@ const Poems = () => {
             )}
           </div>
 
-          <div className="bg-orange-50 rounded-xl p-6 mb-6 border border-orange-200">
-            <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap font-serif">
+          {/* Cover Image */}
+          {selectedPoem.background_image_url && (
+            <div className="mb-6 rounded-2xl overflow-hidden border border-gray-200">
+              <img
+                src={selectedPoem.background_image_url}
+                alt={selectedPoem.title}
+                className="w-full max-h-[500px] object-cover"
+              />
+            </div>
+          )}
+
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-6 mb-6 border border-orange-200/50">
+            <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap font-serif italic">
               {selectedPoem.content}
             </p>
           </div>
@@ -500,35 +511,48 @@ const Poems = () => {
               <div
                 key={poem.id}
                 onClick={() => setSelectedPoem(poem)}
-                className="bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 border-2 border-orange-100 hover:border-primary transition-all cursor-pointer hover:transform hover:scale-105 shadow-md hover:shadow-xl"
+                className="bg-white rounded-lg sm:rounded-xl overflow-hidden border-2 border-orange-100 hover:border-primary transition-all cursor-pointer hover:transform hover:scale-105 shadow-md hover:shadow-xl"
               >
-                <div className="flex items-start justify-between mb-3 sm:mb-4">
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 flex-1 line-clamp-2">
-                    {poem.title}
-                  </h3>
-                  {poem.category_icon && (
-                    <span className="text-xl sm:text-2xl ml-2">{poem.category_icon}</span>
-                  )}
-                </div>
-                
-                <p className="text-gray-600 mb-3 sm:mb-4 line-clamp-3 text-sm sm:text-base">
-                  {poem.content}
-                </p>
-                
-                <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-orange-100">
-                  <div>
-                    {poem.author_name ? (
-                      <>
-                        <p className="text-xs text-gray-500">Written by</p>
-                        <p className="text-primary font-semibold text-sm sm:text-base">{poem.author_name}</p>
-                      </>
-                    ) : (
-                      <p className="text-primary font-semibold text-sm sm:text-base">Anonymous</p>
+                {/* Cover Image */}
+                {poem.background_image_url && (
+                  <div className="w-full h-48 sm:h-56 overflow-hidden bg-gradient-to-br from-orange-100 to-orange-200">
+                    <img
+                      src={poem.background_image_url}
+                      alt={poem.title}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <h3 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 flex-1 line-clamp-2">
+                      {poem.title}
+                    </h3>
+                    {poem.category_icon && (
+                      <span className="text-xl sm:text-2xl ml-2">{poem.category_icon}</span>
                     )}
                   </div>
-                  <p className="text-gray-500 text-xs sm:text-sm">
-                    {new Date(poem.created_at).toLocaleDateString('en-IN')}
+                  
+                  <p className="text-gray-600 mb-3 sm:mb-4 line-clamp-3 text-sm sm:text-base italic font-serif">
+                    {poem.content}
                   </p>
+                  
+                  <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-orange-100">
+                    <div>
+                      {poem.author_name ? (
+                        <>
+                          <p className="text-xs text-gray-500">Written by</p>
+                          <p className="text-primary font-semibold text-sm sm:text-base">{poem.author_name}</p>
+                        </>
+                      ) : (
+                        <p className="text-primary font-semibold text-sm sm:text-base">Anonymous</p>
+                      )}
+                    </div>
+                    <p className="text-gray-500 text-xs sm:text-sm">
+                      {new Date(poem.created_at).toLocaleDateString('en-IN')}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
