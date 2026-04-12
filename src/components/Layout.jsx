@@ -9,14 +9,18 @@ import {
   FiTrendingUp,
   FiMusic,
   FiVideo,
-  FiImage
+  FiImage,
+  FiMenu,
+  FiX
 } from 'react-icons/fi';
 import { MdAdminPanelSettings } from 'react-icons/md';
+import { useState } from 'react';
 
 const Layout = ({ children }) => {
   const { user, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -46,9 +50,121 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto flex">
-        {/* Left Sidebar - Fixed Navigation */}
-        <aside className="w-20 xl:w-64 h-screen sticky top-0 border-r border-gray-200 flex flex-col">
+      {/* Mobile Header */}
+      <div className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          </button>
+          
+          <Link to="/home" className="flex items-center space-x-2">
+            <img 
+              src="/logo.png" 
+              alt="Mimanasa" 
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+              मीमांसा
+            </span>
+          </Link>
+
+          <Link to="/profile" className="p-2">
+            {user?.profile_photo ? (
+              <img
+                src={user.profile_photo}
+                alt="Profile"
+                className="w-8 h-8 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
+                {user?.username?.[0]?.toUpperCase()}
+              </div>
+            )}
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <div className={`lg:hidden fixed top-0 left-0 h-full w-64 bg-white z-50 transform transition-transform duration-300 ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="p-4 border-b border-gray-200">
+          <Link to="/home" className="flex items-center space-x-3" onClick={() => setMobileMenuOpen(false)}>
+            <img 
+              src="/logo.png" 
+              alt="Mimanasa" 
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <span className="text-xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+              मीमांसा
+            </span>
+          </Link>
+        </div>
+
+        <nav className="p-4 space-y-1">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path + item.label}
+              to={item.path}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center space-x-4 px-4 py-3 rounded-full font-semibold text-base transition-all ${
+                isActive(item.path)
+                  ? 'bg-orange-50 text-primary'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <item.icon size={24} />
+              <span>{item.label}</span>
+            </Link>
+          ))}
+
+          <button
+            onClick={() => {
+              handleLogout();
+              setMobileMenuOpen(false);
+            }}
+            className="w-full flex items-center space-x-4 px-4 py-3 rounded-full text-gray-700 hover:bg-red-50 hover:text-red-600 transition-all font-semibold text-base"
+          >
+            <FiLogOut size={24} />
+            <span>Logout</span>
+          </button>
+        </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center space-x-3 hover:bg-gray-100 rounded-full p-2 transition-colors">
+            {user?.profile_photo ? (
+              <img
+                src={user.profile_photo}
+                alt="Profile"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
+                {user?.username?.[0]?.toUpperCase()}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-gray-900 truncate">{user?.username}</p>
+              <p className="text-sm text-gray-500 truncate">@{user?.username}</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      <div className="lg:max-w-7xl lg:mx-auto lg:flex">
+        {/* Desktop Left Sidebar */}
+        <aside className="hidden lg:block w-20 xl:w-64 h-screen sticky top-0 border-r border-gray-200 flex-col">
           {/* Logo */}
           <div className="p-4 xl:p-6">
             <Link to="/home" className="flex items-center justify-center xl:justify-start space-x-3">
@@ -112,12 +228,12 @@ const Layout = ({ children }) => {
         </aside>
 
         {/* Main Content - Center Feed */}
-        <main className="flex-1 min-h-screen border-r border-gray-200 max-w-2xl">
+        <main className="flex-1 min-h-screen lg:border-r border-gray-200 lg:max-w-2xl">
           {children}
         </main>
 
         {/* Right Sidebar - Trending/Stats */}
-        <aside className="hidden lg:block w-80 xl:w-96 h-screen sticky top-0 p-4">
+        <aside className="hidden xl:block w-80 2xl:w-96 h-screen sticky top-0 p-4">
           <div className="bg-gray-50 rounded-2xl p-4 mb-4">
             <h2 className="text-xl font-bold text-gray-900 mb-4">What's happening</h2>
             <div className="space-y-4">
@@ -170,6 +286,27 @@ const Layout = ({ children }) => {
           </div>
         </aside>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+        <div className="flex items-center justify-around py-2">
+          <Link to="/home" className={`p-3 ${isActive('/home') ? 'text-primary' : 'text-gray-600'}`}>
+            <FiHome size={24} />
+          </Link>
+          <Link to="/poems" className={`p-3 ${isActive('/poems') ? 'text-primary' : 'text-gray-600'}`}>
+            <FiFileText size={24} />
+          </Link>
+          <Link to="/home" className="p-3 text-gray-600">
+            <FiTrendingUp size={24} />
+          </Link>
+          <Link to="/profile" className={`p-3 ${isActive('/profile') ? 'text-primary' : 'text-gray-600'}`}>
+            <FiUser size={24} />
+          </Link>
+        </div>
+      </div>
+
+      {/* Add padding bottom for mobile to prevent content being hidden by bottom nav */}
+      <div className="lg:hidden h-16"></div>
     </div>
   );
 };
