@@ -61,7 +61,7 @@ const AdminPanel = () => {
         api.get('/books/?show_all=true'), 
         api.get('/authors/'), 
         api.get('/poems/'),
-        api.get('/stories/'),
+        api.get('/short-stories/'),
         api.get('/audiobooks/'),
         api.get('/videos/'),
         api.get('/images/')
@@ -143,7 +143,7 @@ const AdminPanel = () => {
 
   const handleAddStory = async (formData) => {
     try {
-      await api.post('/stories/', { ...formData, user_id: user.id });
+      await api.post('/short-stories/', { ...formData, user_id: user.id });
       addToast('Story added successfully!', 'success');
       setShowStoryModal(false);
       fetchData();
@@ -233,7 +233,7 @@ const AdminPanel = () => {
   const deleteStory = async (storyId) => {
     if (!confirm('Delete this story?')) return;
     try {
-      await api.delete(`/stories/${storyId}/`, { data: { user_id: user.id } });
+      await api.delete(`/short-stories/${storyId}/`, { data: { user_id: user.id } });
       addToast('Story deleted!', 'success');
       fetchData();
     } catch (error) {

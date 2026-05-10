@@ -33,7 +33,7 @@ const SavedItems = () => {
             switch (bm.content_type) {
               case 'book': detailRes = await api.get(`/books/${bm.content_id}/`); break;
               case 'poem': detailRes = await api.get(`/poems/${bm.content_id}/`); break;
-              case 'story': detailRes = await api.get(`/stories/${bm.content_id}/`); break;
+              case 'story': detailRes = await api.get(`/short-stories/${bm.content_id}/`); break;
               case 'audiobook': detailRes = await api.get(`/audiobooks/${bm.content_id}/`); break;
               case 'video': detailRes = await api.get(`/videos/${bm.content_id}/`); break;
               case 'image': detailRes = await api.get(`/images/${bm.content_id}/`); break;
