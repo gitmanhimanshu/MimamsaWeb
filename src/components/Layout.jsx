@@ -11,7 +11,8 @@ import {
   FiVideo,
   FiImage,
   FiMenu,
-  FiX
+  FiX,
+  FiBookmark
 } from 'react-icons/fi';
 import { MdAdminPanelSettings } from 'react-icons/md';
 import { useState } from 'react';
@@ -35,6 +36,7 @@ const Layout = ({ children }) => {
     { icon: FiMusic, label: 'Audio', path: '/home' },
     { icon: FiVideo, label: 'Videos', path: '/home' },
     { icon: FiImage, label: 'Images', path: '/home' },
+    { icon: FiBookmark, label: 'Saved', path: '/saved' },
     { icon: FiUser, label: 'Profile', path: '/profile' },
   ];
 
@@ -118,10 +120,10 @@ const Layout = ({ children }) => {
               key={item.path + item.label}
               to={item.path}
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center space-x-4 px-4 py-3 rounded-full font-semibold text-base transition-all ${
+              className={`flex items-center space-x-4 px-4 py-3 rounded-xl font-semibold text-base transition-all duration-200 ${
                 isActive(item.path)
-                  ? 'bg-orange-50 text-primary'
-                  : 'text-gray-700 hover:bg-gray-100'
+                  ? 'bg-orange-50/80 text-primary shadow-sm'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
               }`}
             >
               <item.icon size={24} />
@@ -185,10 +187,10 @@ const Layout = ({ children }) => {
               <Link
                 key={item.path + item.label}
                 to={item.path}
-                className={`flex items-center justify-center xl:justify-start space-x-4 px-2 xl:px-4 py-2.5 xl:py-3 rounded-full font-semibold text-base xl:text-lg transition-all ${
+                className={`flex items-center justify-center xl:justify-start space-x-4 px-2 xl:px-4 py-2.5 xl:py-3 rounded-xl font-semibold text-base xl:text-lg transition-all duration-200 ${
                   isActive(item.path)
-                    ? 'bg-orange-50 text-primary'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-orange-50/80 text-primary shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <item.icon size={22} className="xl:w-[26px] xl:h-[26px]" />
@@ -298,6 +300,9 @@ const Layout = ({ children }) => {
           </Link>
           <Link to="/home" className="p-3 text-gray-600">
             <FiTrendingUp size={24} />
+          </Link>
+          <Link to="/saved" className={`p-3 ${isActive('/saved') ? 'text-primary' : 'text-gray-600'}`}>
+            <FiBookmark size={24} />
           </Link>
           <Link to="/profile" className={`p-3 ${isActive('/profile') ? 'text-primary' : 'text-gray-600'}`}>
             <FiUser size={24} />

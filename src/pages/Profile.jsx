@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 import api, { uploadImage } from '../services/api';
 import { FiUser, FiMail, FiCamera, FiSave } from 'react-icons/fi';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const { addToast } = useToast();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -12,7 +14,6 @@ const Profile = () => {
   });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     if (user) {
@@ -29,20 +30,18 @@ const Profile = () => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setMessage({ type: 'error', text: 'Please select an image file' });
+      addToast('Please select an image file', 'error');
       return;
     }
 
     try {
       setUploading(true);
-      setMessage({ type: '', text: '' });
       
       const result = await uploadImage(file);
       setFormData({ ...formData, profile_photo: result.url });
-      setMessage({ type: 'success', text: 'Image uploaded successfully!' });
+      addToast('Image uploaded successfully!', 'success');
     } catch (error) {
-      console.error('Error uploading image:', error);
-      setMessage({ type: 'error', text: 'Failed to upload image' });
+      addToast('Failed to upload image', 'error');
     } finally {
       setUploading(false);
     }
@@ -51,15 +50,13 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    setMessage({ type: '', text: '' });
 
     try {
       const response = await api.put(`/app/profile/${user.id}/`, formData);
       updateUser(response.data);
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      addToast('Profile updated successfully!', 'success');
     } catch (error) {
-      console.error('Error updating profile:', error);
-      setMessage({ type: 'error', text: 'Failed to update profile' });
+      addToast('Failed to update profile', 'error');
     } finally {
       setSaving(false);
     }
@@ -69,7 +66,7 @@ const Profile = () => {
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">My Profile</h1>
 
-      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-orange-200 shadow-lg">
+      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-gray-100 shadow-sm">
         {/* Profile Photo */}
         <div className="flex flex-col items-center mb-6 sm:mb-8">
           <div className="relative">
@@ -102,19 +99,6 @@ const Profile = () => {
           )}
         </div>
 
-        {/* Message */}
-        {message.text && (
-          <div
-            className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold ${
-              message.type === 'success'
-                ? 'bg-green-100 border-2 border-green-500 text-green-700'
-                : 'bg-red-100 border-2 border-red-500 text-red-700'
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
-
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* Username */}
@@ -128,7 +112,7 @@ const Profile = () => {
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-orange-50 border-2 border-orange-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-white/80 border border-gray-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -145,7 +129,7 @@ const Profile = () => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-orange-50 border-2 border-orange-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base bg-white/80 border border-gray-200 rounded-lg sm:rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                 required
               />
             </div>
@@ -153,7 +137,7 @@ const Profile = () => {
 
           {/* Admin Badge */}
           {user?.is_admin && (
-            <div className="bg-orange-100 border-2 border-primary rounded-lg sm:rounded-xl p-3 sm:p-4">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
               <p className="text-primary font-bold flex items-center space-x-2 text-sm sm:text-base">
                 <span>⚙️</span>
                 <span>Admin Account</span>
@@ -165,7 +149,7 @@ const Profile = () => {
           <button
             type="submit"
             disabled={saving || uploading}
-            className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-2.5 sm:py-3 text-sm sm:text-base rounded-lg sm:rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 shadow-lg"
+            className="w-full bg-primary text-white rounded-xl py-2.5 sm:py-3 text-sm sm:text-base font-bold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
           >
             <FiSave size={16} className="sm:w-5 sm:h-5" />
             <span>{saving ? 'Saving...' : 'Save Changes'}</span>

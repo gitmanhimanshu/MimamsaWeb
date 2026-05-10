@@ -11,6 +11,7 @@ import Poems from './pages/Poems';
 import Profile from './pages/Profile';
 import AdminPanel from './pages/AdminPanel';
 import ForgotPassword from './pages/ForgotPassword';
+import SavedItems from './pages/SavedItems';
 
 // Layout
 import Layout from './components/Layout';
@@ -104,6 +105,16 @@ function AppRoutes() {
           <ProtectedRoute adminOnly>
             <Layout>
               <AdminPanel />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/saved"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <SavedItems />
             </Layout>
           </ProtectedRoute>
         }

@@ -3,12 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { FiBook, FiFileText, FiHeadphones, FiVideo, FiImage, FiLogIn, FiUserPlus, FiX } from 'react-icons/fi';
 import { BsThreeDots } from 'react-icons/bs';
+import StoriesBar from '../components/StoriesBar';
+import StoryViewer from '../components/StoryViewer';
 
 const LandingPage = () => {
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [storyViewerUserId, setStoryViewerUserId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -120,6 +123,12 @@ const LandingPage = () => {
           </div>
         </div>
       </header>
+
+      {/* Stories Bar */}
+      <StoriesBar
+        onViewStory={(userId) => setStoryViewerUserId(userId)}
+        onCreateStory={() => setShowLoginModal(true)}
+      />
 
       {/* Hero Banner - Twitter Style */}
       <div className="border-b border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100/50">
@@ -324,6 +333,14 @@ const LandingPage = () => {
           </div>
         </aside>
       </div>
+
+      {/* Story Viewer */}
+      {storyViewerUserId && (
+        <StoryViewer
+          userId={storyViewerUserId}
+          onClose={() => setStoryViewerUserId(null)}
+        />
+      )}
 
       {/* Login Modal - Twitter Style */}
       {showLoginModal && (

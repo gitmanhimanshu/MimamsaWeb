@@ -1,7 +1,9 @@
 import { FiX, FiUpload } from 'react-icons/fi';
 import { useState } from 'react';
+import { useToast } from '../../components/Toast';
 
 const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
+  const { addToast } = useToast();
   const [form, setForm] = useState({
     title: '', description: '', content: '', author: '', category: '', genre: 'poetry', language: 'Hindi', background_image_url: ''
   });
@@ -47,10 +49,10 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
       const data = await response.json();
       setForm({ ...form, background_image_url: data.secure_url });
       setImagePreview(data.secure_url);
-      alert('Image uploaded successfully!');
+      addToast('Image uploaded successfully!', 'success');
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Failed to upload image');
+      addToast('Failed to upload image', 'error');
     } finally {
       setUploading(false);
     }
@@ -67,29 +69,29 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full border-2 border-primary shadow-lg my-8">
-        <div className="flex items-center justify-between mb-4">
+      <div className="bg-white rounded-2xl shadow-xl p-6 max-w-2xl w-full my-8">
+        <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-100">
           <h3 className="text-xl font-bold text-gray-800">Add New Poem</h3>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-800"><FiX size={24} /></button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input type="text" placeholder="Poem Title *" value={form.title} onChange={(e) => setForm({...form, title: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" required />
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" required />
           
           <textarea placeholder="Short Description (optional)" value={form.description} onChange={(e) => setForm({...form, description: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" rows="2" />
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="2" />
           
           <textarea placeholder="Poem Content *" value={form.content} onChange={(e) => setForm({...form, content: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" rows="8" required />
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" rows="8" required />
           
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Cover Image (optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Cover Image (optional)</label>
             <div className="flex items-center space-x-4">
               <label className="flex-1 cursor-pointer">
-                <div className="flex items-center justify-center space-x-2 px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg hover:bg-orange-100 transition-colors">
+                <div className="flex items-center justify-center space-x-2 px-4 py-2 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl hover:border-primary hover:bg-orange-50/30 transition-colors">
                   <FiUpload />
-                  <span className="text-sm font-semibold text-gray-700">
+                  <span className="text-sm font-medium text-gray-700">
                     {uploading ? 'Uploading...' : 'Upload Image'}
                   </span>
                 </div>
@@ -98,28 +100,28 @@ const AddPoemModal = ({ show, onClose, onSubmit, authors }) => {
             </div>
             {imagePreview && (
               <div className="mt-3">
-                <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-lg border-2 border-primary" />
+                <img src={imagePreview} alt="Preview" className="w-full h-40 object-cover rounded-xl border border-gray-200" />
               </div>
             )}
           </div>
 
           <select value={form.author} onChange={(e) => setForm({...form, author: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
             <option value="">Select Author</option>
             {authors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
           </select>
           <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
             <option value="">Select Category</option>
             {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
           </select>
           <select value={form.genre} onChange={(e) => setForm({...form, genre: e.target.value})}
-            className="w-full px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
+            className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
             <option value="">Select Genre</option>
             {genres.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
           <button type="submit" disabled={uploading}
-            className="w-full bg-primary hover:bg-orange-600 text-white py-3 rounded-lg font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
+            className="w-full bg-primary text-white rounded-xl py-2.5 font-semibold hover:bg-orange-600 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
             Add Poem
           </button>
         </form>

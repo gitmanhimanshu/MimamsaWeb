@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 
 const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: '',
@@ -38,7 +40,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
     e.preventDefault();
     
     if (!form.title.trim() || !form.content.trim()) {
-      alert('Please fill in title and content');
+      addToast('Please fill in title and content', 'info');
       return;
     }
 
@@ -49,13 +51,13 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
         user_id: user.id,
       });
       
-      alert('Your poem has been published!');
+      addToast('Your poem has been published!', 'success');
       setForm({ title: '', content: '', category: '', genre: 'poetry', language: 'Hindi' });
       onSuccess();
       onClose();
     } catch (error) {
       console.error('Error submitting poem:', error);
-      alert('Failed to publish poem');
+      addToast('Failed to publish poem', 'error');
     } finally {
       setLoading(false);
     }
@@ -65,10 +67,10 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black/80 flex items-start justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl p-6 max-w-2xl w-full border-2 border-orange-200 shadow-2xl my-20">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-2xl font-bold text-gray-800">Write Your Poem ✍️</h3>
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-800 transition-colors">
+      <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-5 sm:p-6 my-20">
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+          <h3 className="text-xl font-bold text-gray-900">Write Your Poem ✍️</h3>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-400 hover:text-gray-600">
             <FiX size={24} />
           </button>
         </div>
@@ -81,7 +83,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
               placeholder="Enter poem title"
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               required
             />
           </div>
@@ -92,7 +94,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
               placeholder="Write your poem here..."
               value={form.content}
               onChange={(e) => setForm({ ...form, content: e.target.value })}
-              className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary resize-none"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none"
               rows="12"
               required
             />
@@ -104,7 +106,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
               <select
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               >
                 <option value="">Select Category</option>
                 {categories.map((cat) => (
@@ -120,7 +122,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
               <select
                 value={form.genre}
                 onChange={(e) => setForm({ ...form, genre: e.target.value })}
-                className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 required
               >
                 {genres.map((genre) => (
@@ -136,7 +138,7 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
               <select
                 value={form.language}
                 onChange={(e) => setForm({ ...form, language: e.target.value })}
-                className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               >
                 <option value="Hindi">Hindi</option>
                 <option value="English">English</option>
@@ -146,24 +148,24 @@ const AddUserPoemModal = ({ show, onClose, onSuccess }) => {
             </div>
           </div>
 
-          <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-4">
+          <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100">
             <p className="text-gray-700 text-sm">
               📝 Your poem will be visible to all users once published. Your name will be shown as the author.
             </p>
           </div>
 
-          <div className="flex space-x-3 pt-4">
+          <div className="flex items-center justify-between pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-xl transition-colors font-semibold"
+              className="text-gray-500 hover:text-gray-700 font-medium"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-3 bg-primary hover:bg-orange-600 text-white rounded-xl transition-colors disabled:opacity-50 font-bold shadow-lg"
+              className="px-8 bg-primary text-white font-semibold py-3 rounded-xl hover:bg-orange-600 transition-colors shadow-sm disabled:opacity-50"
             >
               {loading ? 'Publishing...' : 'Publish Poem'}
             </button>

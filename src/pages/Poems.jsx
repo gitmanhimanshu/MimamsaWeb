@@ -3,9 +3,11 @@ import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { FiArrowLeft, FiStar, FiTrash2, FiEdit3, FiFilter } from 'react-icons/fi';
 import AddUserPoemModal from '../components/AddUserPoemModal';
+import { useToast } from '../components/Toast';
 
 const Poems = () => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [poems, setPoems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedGenre, setSelectedGenre] = useState(null);
@@ -104,10 +106,10 @@ const Poems = () => {
       
       setShowReviewModal(false);
       fetchReviews();
-      alert('Review submitted successfully!');
+      addToast('Review submitted!', 'success');
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review');
+      addToast('Failed to submit review', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -124,10 +126,10 @@ const Poems = () => {
       setUserReview(null);
       setReviewForm({ rating: 5, comment: '' });
       fetchReviews();
-      alert('Review deleted successfully!');
+      addToast('Review deleted', 'success');
     } catch (error) {
       console.error('Error deleting review:', error);
-      alert('Failed to delete review');
+      addToast('Failed to delete review', 'error');
     }
   };
 
@@ -171,7 +173,7 @@ const Poems = () => {
         </button>
 
         {/* Poem Content */}
-        <div className="bg-white rounded-xl p-8 mb-8 shadow-lg border-2 border-orange-200">
+        <div className="bg-white rounded-2xl p-6 sm:p-8 mb-6 shadow-sm border border-gray-100">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{selectedPoem.title}</h1>
           
           <div className="flex items-center space-x-4 mb-6">
@@ -200,7 +202,7 @@ const Poems = () => {
             </div>
           )}
 
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl p-6 mb-6 border border-orange-200/50">
+          <div className="bg-gradient-to-br from-orange-50/60 to-orange-100/30 rounded-2xl p-5 sm:p-6 mb-4 border border-orange-100">
             <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap font-serif italic">
               {selectedPoem.content}
             </p>
@@ -216,7 +218,7 @@ const Poems = () => {
         </div>
 
         {/* Reviews Section */}
-        <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-orange-200">
+        <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Reviews & Ratings</h2>
             {selectedPoem.average_rating > 0 && (
@@ -233,7 +235,7 @@ const Poems = () => {
           {/* Write Review Button */}
           <button
             onClick={() => setShowReviewModal(true)}
-            className="w-full mb-6 bg-orange-50 hover:bg-orange-100 border-2 border-primary text-primary font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2"
+            className="w-full mb-6 bg-primary text-white font-semibold py-3 rounded-xl hover:bg-orange-600 transition-colors shadow-sm flex items-center justify-center space-x-2"
           >
             <span>{userReview ? '✏️' : '⭐'}</span>
             <span>{userReview ? 'Edit Your Review' : 'Write a Review'}</span>
@@ -241,7 +243,7 @@ const Poems = () => {
 
           {/* User's Review */}
           {userReview && (
-            <div className="bg-orange-50 border-2 border-primary p-4 rounded-xl mb-6">
+            <div className="bg-orange-50/40 rounded-xl p-4 border border-orange-100 mb-6">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-primary font-bold">Your Review</span>
                 <button
@@ -271,7 +273,7 @@ const Poems = () => {
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">All Reviews ({reviews.length})</h3>
               {reviews.map(review => (
-                <div key={review.id} className="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                <div key={review.id} className="bg-gray-50/50 rounded-xl p-4 border border-gray-100">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-gray-800 font-semibold">{review.user_name}</span>
                     <div className="flex items-center space-x-1">
@@ -303,7 +305,7 @@ const Poems = () => {
         {/* Review Modal */}
         {showReviewModal && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl p-6 max-w-md w-full border-2 border-orange-200 shadow-2xl">
+            <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
               <h3 className="text-xl font-bold text-gray-800 mb-4">
                 {userReview ? 'Edit Review' : 'Write a Review'}
               </h3>
@@ -332,7 +334,7 @@ const Poems = () => {
                   <textarea
                     value={reviewForm.comment}
                     onChange={(e) => setReviewForm({ ...reviewForm, comment: e.target.value })}
-                    className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary resize-none"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary resize-none"
                     rows="4"
                     placeholder="Share your thoughts about this poem..."
                   />
@@ -371,7 +373,7 @@ const Poems = () => {
         </h1>
         <button
           onClick={() => setShowAddPoemModal(true)}
-          className="bg-primary hover:bg-orange-600 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center space-x-2 shadow-lg text-sm sm:text-base"
+          className="bg-primary text-white font-semibold rounded-xl py-3 px-6 shadow-sm hover:shadow-md transition-colors flex items-center justify-center space-x-2"
         >
           <FiEdit3 size={18} className="sm:w-5 sm:h-5" />
           <span>Write Your Poem</span>
@@ -398,7 +400,7 @@ const Poems = () => {
               setShowMyPoems(!showMyPoems);
               setSelectedCategory(null);
             }}
-            className="w-full bg-white rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-md hover:shadow-lg transition-all border-2 border-orange-200 hover:border-primary"
+            className="w-full bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3 sm:space-x-4">
@@ -427,7 +429,7 @@ const Poems = () => {
               onClick={() => setSelectedCategory(null)}
               className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                 !selectedCategory
-                  ? 'bg-primary text-white shadow-md'
+                  ? 'bg-primary text-white shadow-md ring-2 ring-primary ring-offset-2'
                   : 'bg-white text-gray-700 hover:bg-orange-50'
               }`}
             >
@@ -439,7 +441,7 @@ const Poems = () => {
                 onClick={() => setSelectedCategory(cat.value)}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors flex items-center space-x-1 sm:space-x-2 shadow-sm ${
                   selectedCategory === cat.value
-                    ? 'bg-primary text-white shadow-md'
+                    ? 'bg-primary text-white shadow-md ring-2 ring-primary ring-offset-2'
                     : 'bg-white text-gray-700 hover:bg-orange-50'
                 }`}
               >
@@ -464,7 +466,7 @@ const Poems = () => {
               className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                 !selectedGenre
                   ? 'bg-primary text-white shadow-md'
-                  : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
               }`}
             >
               सभी विधाएँ
@@ -476,7 +478,7 @@ const Poems = () => {
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg text-sm sm:text-base font-semibold transition-colors shadow-sm ${
                   selectedGenre === genre.value
                     ? 'bg-primary text-white shadow-md'
-                    : 'bg-white text-gray-700 hover:bg-orange-50 border border-orange-200'
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
                 }`}
               >
                 {genre.label}
@@ -501,8 +503,8 @@ const Poems = () => {
         </h2>
         
         {getFilteredPoems().length === 0 ? (
-          <div className="text-center py-12 sm:py-20 bg-white rounded-lg sm:rounded-xl shadow-md">
-            <p className="text-4xl sm:text-5xl md:text-6xl mb-4">📝</p>
+          <div className="flex flex-col items-center justify-center py-12 sm:py-20 bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div className="text-4xl sm:text-5xl md:text-6xl mb-4">📝</div>
             <p className="text-gray-600 text-base sm:text-lg">कोई कविता नहीं मिली</p>
           </div>
         ) : (
@@ -511,7 +513,7 @@ const Poems = () => {
               <div
                 key={poem.id}
                 onClick={() => setSelectedPoem(poem)}
-                className="bg-white rounded-lg sm:rounded-xl overflow-hidden border-2 border-orange-100 hover:border-primary transition-all cursor-pointer hover:transform hover:scale-105 shadow-md hover:shadow-xl"
+                className="bg-white rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-all cursor-pointer overflow-hidden"
               >
                 {/* Cover Image */}
                 {poem.background_image_url && (

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { FiX, FiUpload } from 'react-icons/fi';
 import api, { uploadImage } from '../../services/api';
+import { useToast } from '../../components/Toast';
 
 const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
+  const { addToast } = useToast();
   const [formData, setFormData] = useState({
     title: '', description: '', author: '', category: 'other',
     language: 'Hindi', image_url: '', tags: ''
@@ -30,7 +32,7 @@ const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      addToast('Please select an image file', 'error');
       return;
     }
 
@@ -38,10 +40,10 @@ const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
       setUploading(true);
       const result = await uploadImage(file);
       setFormData({ ...formData, image_url: result.url });
-      alert('Image uploaded successfully!');
+      addToast('Image uploaded successfully!', 'success');
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Failed to upload image');
+      addToast('Failed to upload image', 'error');
     } finally {
       setUploading(false);
     }
@@ -56,71 +58,71 @@ const AddImageModal = ({ show, onClose, onSubmit, authors }) => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-primary text-white p-4 flex justify-between items-center rounded-t-lg">
-          <h2 className="text-xl font-bold">Add Image</h2>
-          <button onClick={onClose} className="hover:bg-orange-600 p-1 rounded"><FiX size={24} /></button>
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white p-4 flex justify-between items-center border-b border-gray-100 rounded-t-2xl">
+          <h2 className="text-xl font-bold text-gray-800">Add Image</h2>
+          <button onClick={onClose} className="text-gray-600 hover:text-gray-800 p-1 rounded hover:bg-gray-100"><FiX size={24} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Title *</label>
+            <label className="block text-gray-700 font-medium mb-2">Title *</label>
             <input type="text" name="title" value={formData.title} onChange={handleChange} required
-              className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Description</label>
+            <label className="block text-gray-700 font-medium mb-2">Description</label>
             <textarea name="description" value={formData.description} onChange={handleChange} rows={4}
-              className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Author</label>
+            <label className="block text-gray-700 font-medium mb-2">Author</label>
             <select name="author" value={formData.author} onChange={handleChange}
-              className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
               <option value="">Select Author</option>
               {authors.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
             </select>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">Category</label>
+              <label className="block text-gray-700 font-medium mb-2">Category</label>
               <select name="category" value={formData.category} onChange={handleChange}
-                className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
                 {categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">Language</label>
+              <label className="block text-gray-700 font-medium mb-2">Language</label>
               <input type="text" name="language" value={formData.language} onChange={handleChange}
-                className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
             </div>
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Tags (comma-separated)</label>
+            <label className="block text-gray-700 font-medium mb-2">Tags (comma-separated)</label>
             <input type="text" name="tags" value={formData.tags} onChange={handleChange}
               placeholder="e.g., art, culture, history"
-              className="w-full px-4 py-2 border-2 border-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+              className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
           </div>
           <div>
-            <label className="block text-gray-700 font-semibold mb-2">Upload Image *</label>
+            <label className="block text-gray-700 font-medium mb-2">Upload Image *</label>
             <div className="flex items-center space-x-3">
-              <label className="flex-1 px-4 py-2 bg-orange-50 border-2 border-primary rounded-lg cursor-pointer hover:bg-orange-100 flex items-center justify-center space-x-2">
-                <FiUpload /><span>{uploading ? 'Uploading...' : 'Upload Image'}</span>
+              <label className="flex-1 px-4 py-2 bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary hover:bg-orange-50/30 transition-colors flex items-center justify-center space-x-2">
+                <FiUpload /><span className="font-medium text-gray-700">{uploading ? 'Uploading...' : 'Upload Image'}</span>
                 <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" disabled={uploading} required={!formData.image_url} />
               </label>
             </div>
             {formData.image_url && (
               <div className="mt-3">
-                <img src={formData.image_url} alt="Preview" className="w-32 h-32 object-cover rounded-lg border-2 border-primary" />
-                <p className="text-sm text-green-600 mt-2">✓ Image uploaded</p>
+                <img src={formData.image_url} alt="Preview" className="w-32 h-32 object-cover rounded-xl border border-gray-200" />
+                <p className="text-sm text-green-600 mt-2 font-medium">✓ Image uploaded</p>
               </div>
             )}
           </div>
           <div className="flex space-x-3 pt-4">
-            <button type="submit" disabled={uploading || !formData.image_url} className="flex-1 bg-primary hover:bg-orange-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50">
+            <button type="submit" disabled={uploading || !formData.image_url} className="flex-1 bg-primary text-white rounded-xl py-2.5 font-semibold hover:bg-orange-600 transition-colors shadow-sm disabled:opacity-50">
               Add Image
             </button>
-            <button type="button" onClick={onClose} className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 rounded-lg transition-colors">
+            <button type="button" onClick={onClose} className="flex-1 bg-gray-100 text-gray-700 rounded-xl py-2.5 font-semibold hover:bg-gray-200 transition-colors">
               Cancel
             </button>
           </div>

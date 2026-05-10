@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../components/Toast';
 import api from '../services/api';
 import { FiBook, FiFileText, FiHeadphones, FiVideo, FiImage, FiX, FiHeart, FiMessageCircle, FiRepeat, FiShare, FiSend, FiBookmark } from 'react-icons/fi';
 import { BsThreeDots } from 'react-icons/bs';
+import StoriesBar from '../components/StoriesBar';
+import StoryViewer from '../components/StoryViewer';
+import CreateStoryModal from '../components/CreateStoryModal';
 
 const Home = () => {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [feed, setFeed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -18,10 +23,12 @@ const Home = () => {
   const [loadingComments, setLoadingComments] = useState(false);
   const [expandedDescriptions, setExpandedDescriptions] = useState({});
   const [expandedPoems, setExpandedPoems] = useState({});
+  const [storyViewerUserId, setStoryViewerUserId] = useState(null);
+  const [showCreateStory, setShowCreateStory] = useState(false);
 
   useEffect(() => {
     fetchFeed();
-  }, []);
+  }, [user?.id]);
 
   const fetchFeed = async () => {
     try {
@@ -37,7 +44,7 @@ const Home = () => {
   const handleLike = async (item, e) => {
     e.stopPropagation();
     if (!user) {
-      alert('Please login to like posts');
+      addToast('Please login to like posts', 'info');
       return;
     }
 
@@ -63,6 +70,63 @@ const Home = () => {
     }
   };
 
+  const handleBookmark = async (item, e) => {
+    e.stopPropagation();
+    if (!user) {
+      addToast('Please login to save posts', 'info');
+      return;
+    }
+
+    // Debug: log user object
+    console.log('👤 user object:', user);
+    console.log('📦 item object:', item);
+
+    if (!user.id) {
+      addToast('User ID missing. Please logout and login again.', 'error');
+      return;
+    }
+    if (!item.type) {
+      addToast('Content type missing.', 'error');
+      return;
+    }
+    if (!item.id) {
+      addToast('Content ID missing.', 'error');
+      return;
+    }
+
+    const payload = {
+      user_id: user.id,
+      content_type: item.type,
+      content_id: item.id
+    };
+    console.log('📤 Bookmark payload:', payload);
+
+    try {
+      const response = await api.post('/bookmarks/toggle/', payload);
+      console.log('📥 Bookmark response:', response.data);
+
+      setFeed(feed.map(post => {
+        if (post.type === item.type && post.id === item.id) {
+          return {
+            ...post,
+            user_saved: response.data.saved
+          };
+        }
+        return post;
+      }));
+
+      addToast(
+        response.data.saved ? 'Saved to your collection!' : 'Removed from saved',
+        'success'
+      );
+    } catch (error) {
+      console.error('❌ Bookmark error:', error);
+      console.error('❌ Error response:', error.response);
+      const errMsg = error.response?.data?.error || error.message || 'Unknown error';
+      addToast('Save failed: ' + errMsg, 'error');
+    }
+  };
+
   const openComments = async (item, e) => {
     e.stopPropagation();
     setSelectedPost(item);
@@ -81,7 +145,7 @@ const Home = () => {
 
   const handleAddComment = async () => {
     if (!user) {
-      alert('Please login to comment');
+      addToast('Please login to comment', 'info');
       return;
     }
     if (!newComment.trim()) return;
@@ -105,6 +169,41 @@ const Home = () => {
       }));
     } catch (error) {
       console.error('Error adding comment:', error);
+    }
+  };
+
+  const handleShare = async (item, e) => {
+    if (e) e.stopPropagation();
+
+    const baseUrl = window.location.origin;
+    let path = '/home';
+    if (item.type === 'book') path = `/book/${item.id}`;
+    else if (item.type === 'poem') path = '/poems';
+
+    const shareUrl = `${baseUrl}${path}`;
+    const shareData = {
+      title: item.title || 'Mimanasa',
+      text: item.description || item.content || `Check out this ${item.type} on Mimanasa`,
+      url: shareUrl
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Share failed:', err);
+        }
+      }
+    } else if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        addToast('Link copied to clipboard!', 'success');
+      } catch (err) {
+        console.error('Clipboard failed:', err);
+      }
+    } else {
+      addToast(`Share this link: ${shareUrl}`, 'info');
     }
   };
 
@@ -187,6 +286,12 @@ const Home = () => {
 
   return (
     <div className="pb-16 lg:pb-0">
+      {/* Stories Bar */}
+      <StoriesBar
+        onViewStory={(userId) => setStoryViewerUserId(userId)}
+        onCreateStory={() => setShowCreateStory(true)}
+      />
+
       {/* Header - Twitter Style */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-10">
         {/* Tabs */}
@@ -210,11 +315,11 @@ const Home = () => {
       </div>
 
       {/* Feed */}
-      <div className="divide-y divide-gray-200">
+      <div className="divide-y divide-gray-100">
         {filteredFeed.map((item) => (
           <article
             key={`${item.type}-${item.id}`}
-            className="px-2 sm:px-3 py-2.5 sm:py-3 hover:bg-gray-50/50 transition-colors cursor-pointer"
+            className="px-3 sm:px-4 py-3 sm:py-4 hover:bg-gray-50/60 transition-all duration-200 cursor-pointer"
           >
             <div className="flex space-x-2">
               {/* Avatar */}
@@ -287,12 +392,12 @@ const Home = () => {
                   </div>
                 )}
 
-                {/* Poem Content */}
+                {/* Poem Content — Orange box styling */}
                 {item.type === 'poem' && item.content && (
                   <div className="bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 mb-2 sm:mb-3 border border-orange-200/50">
                     <p className="text-gray-800 text-xs sm:text-sm italic whitespace-pre-wrap font-serif leading-relaxed break-words">
-                      {expandedPoems[`${item.type}-${item.id}`] 
-                        ? item.content 
+                      {expandedPoems[`${item.type}-${item.id}`]
+                        ? item.content
                         : truncateText(item.content, 250)}
                     </p>
                     {item.content.length > 250 && (
@@ -302,6 +407,28 @@ const Home = () => {
                           togglePoem(`${item.type}-${item.id}`);
                         }}
                         className="text-primary hover:underline font-normal mt-1.5 sm:mt-2 text-xs sm:text-sm"
+                      >
+                        {expandedPoems[`${item.type}-${item.id}`] ? 'Show less' : 'Read more'}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Story Content — Normal text, no box */}
+                {item.type === 'story' && item.content && (
+                  <div className="text-gray-800 text-xs sm:text-sm mb-2 sm:mb-3 leading-normal">
+                    <p className="whitespace-pre-wrap break-words">
+                      {expandedPoems[`${item.type}-${item.id}`]
+                        ? item.content
+                        : truncateText(item.content, 280)}
+                    </p>
+                    {item.content.length > 280 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePoem(`${item.type}-${item.id}`);
+                        }}
+                        className="text-primary hover:underline font-normal mt-1 sm:mt-1.5 text-xs sm:text-sm"
                       >
                         {expandedPoems[`${item.type}-${item.id}`] ? 'Show less' : 'Read more'}
                       </button>
@@ -354,18 +481,37 @@ const Home = () => {
                     </span>
                   </button>
                   
-                  <button className="flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-primary group">
+                  <button
+                    onClick={() => handleShare(item)}
+                    className="flex items-center space-x-1 sm:space-x-2 text-gray-500 hover:text-primary group"
+                  >
                     <div className="p-1.5 sm:p-2 rounded-full group-hover:bg-orange-50 transition-colors">
                       <FiShare size={16} className="sm:hidden" />
                       <FiShare size={18} className="hidden sm:block" />
                     </div>
                   </button>
 
-                  <button className="text-gray-500 hover:text-primary group">
-                    <div className="p-1.5 sm:p-2 rounded-full group-hover:bg-orange-50 transition-colors">
-                      <FiBookmark size={16} className="sm:hidden" />
-                      <FiBookmark size={18} className="hidden sm:block" />
+                  <button
+                    onClick={(e) => handleBookmark(item, e)}
+                    className={`group relative ${item.user_saved ? 'text-primary' : 'text-gray-500 hover:text-primary'} active:scale-90 transition-transform duration-150`}
+                    title={item.user_saved ? 'Saved' : 'Save for later'}
+                  >
+                    <div className={`p-1.5 sm:p-2 rounded-full transition-all duration-200 ${item.user_saved ? 'bg-orange-100' : 'group-hover:bg-orange-50'}`}>
+                      <FiBookmark
+                        size={16}
+                        fill={item.user_saved ? 'currentColor' : 'none'}
+                        className={`sm:hidden transition-all duration-300 ${item.user_saved ? 'drop-shadow-sm' : ''}`}
+                      />
+                      <FiBookmark
+                        size={18}
+                        fill={item.user_saved ? 'currentColor' : 'none'}
+                        className={`hidden sm:block transition-all duration-300 ${item.user_saved ? 'drop-shadow-sm' : ''}`}
+                      />
                     </div>
+                    {/* Tooltip */}
+                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
+                      {item.user_saved ? 'Saved' : 'Save'}
+                    </span>
                   </button>
                 </div>
               </div>
@@ -439,6 +585,25 @@ const Home = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Story Viewer */}
+      {storyViewerUserId && (
+        <StoryViewer
+          userId={storyViewerUserId}
+          onClose={() => setStoryViewerUserId(null)}
+        />
+      )}
+
+      {/* Create Story Modal */}
+      {showCreateStory && (
+        <CreateStoryModal
+          onClose={() => setShowCreateStory(false)}
+          onSuccess={() => {
+            // Refresh stories bar
+            window.dispatchEvent(new CustomEvent('refresh-stories'));
+          }}
+        />
       )}
 
       {/* Comments Modal */}

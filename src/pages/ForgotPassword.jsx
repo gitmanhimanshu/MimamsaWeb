@@ -1,31 +1,29 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../services/api';
-import { FiMail, FiLock, FiArrowLeft } from 'react-icons/fi';
+import { useToast } from '../components/Toast';
+import { FiMail, FiLock, FiArrowLeft, FiCheckCircle } from 'react-icons/fi';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
 
   const handleSendOTP = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
     setLoading(true);
 
     try {
       await api.post('/app/forgot-password/send-otp/', { email });
-      setMessage('OTP sent to your email. Please check your inbox.');
+      addToast('OTP sent to your email', 'success');
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to send OTP');
+      addToast(err.response?.data?.error || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
@@ -33,16 +31,14 @@ const ForgotPassword = () => {
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
     setLoading(true);
 
     try {
       await api.post('/app/forgot-password/verify-otp/', { email, otp });
-      setMessage('OTP verified successfully!');
+      addToast('OTP verified!', 'success');
       setStep(3);
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid OTP');
+      addToast(err.response?.data?.error || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
@@ -50,16 +46,14 @@ const ForgotPassword = () => {
 
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    setError('');
-    setMessage('');
 
     if (newPassword !== confirmPassword) {
-      setError('Passwords do not match');
+      addToast('Passwords do not match', 'error');
       return;
     }
 
     if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters');
+      addToast('Password must be at least 6 characters', 'error');
       return;
     }
 
@@ -71,10 +65,10 @@ const ForgotPassword = () => {
         otp,
         new_password: newPassword
       });
-      setMessage('Password reset successfully! Redirecting to login...');
+      addToast('Password reset successful!', 'success');
       setTimeout(() => navigate('/login'), 2000);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to reset password');
+      addToast(err.response?.data?.error || 'Something went wrong', 'error');
     } finally {
       setLoading(false);
     }
@@ -93,7 +87,7 @@ const ForgotPassword = () => {
           <p className="text-white font-semibold">Reset your password</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-orange-200">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8">
           <Link
             to="/login"
             className="flex items-center space-x-2 text-gray-700 hover:text-primary mb-6 transition-colors font-semibold"
@@ -108,15 +102,9 @@ const ForgotPassword = () => {
             {step === 3 && 'Reset Password'}
           </h2>
 
-          {error && (
-            <div className="bg-red-100 border-2 border-red-500 text-red-700 px-4 py-3 rounded-xl mb-4 font-semibold">
-              {error}
-            </div>
-          )}
-
-          {message && (
-            <div className="bg-green-100 border-2 border-green-500 text-green-700 px-4 py-3 rounded-xl mb-4 font-semibold">
-              {message}
+          {step === 3 && (
+            <div className="flex items-center justify-center mb-6">
+              <FiCheckCircle className="w-16 h-16 text-green-500" />
             </div>
           )}
 
@@ -132,7 +120,7 @@ const ForgotPassword = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     placeholder="your@email.com"
                     required
                   />
@@ -142,7 +130,7 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full bg-primary text-white rounded-xl py-3 font-bold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Sending...' : 'Send OTP'}
               </button>
@@ -159,7 +147,7 @@ const ForgotPassword = () => {
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
-                  className="w-full px-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 text-center text-2xl tracking-widest focus:outline-none focus:border-primary transition-colors"
+                  className="w-full px-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-gray-800 text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                   placeholder="000000"
                   maxLength="6"
                   required
@@ -172,7 +160,7 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full bg-primary text-white rounded-xl py-3 font-bold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Verifying...' : 'Verify OTP'}
               </button>
@@ -199,7 +187,7 @@ const ForgotPassword = () => {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     placeholder="••••••••"
                     required
                   />
@@ -216,7 +204,7 @@ const ForgotPassword = () => {
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-orange-50 border-2 border-orange-200 rounded-xl text-gray-800 focus:outline-none focus:border-primary transition-colors"
+                    className="w-full pl-10 pr-4 py-3 bg-white/80 border border-gray-200 rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     placeholder="••••••••"
                     required
                   />
@@ -226,7 +214,7 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary hover:bg-orange-600 text-white font-bold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full bg-primary text-white rounded-xl py-3 font-bold hover:bg-orange-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Resetting...' : 'Reset Password'}
               </button>
