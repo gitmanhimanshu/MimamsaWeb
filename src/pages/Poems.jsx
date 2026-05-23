@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { FiArrowLeft, FiStar, FiTrash2, FiEdit3, FiFilter } from 'react-icons/fi';
@@ -8,12 +9,13 @@ import { useToast } from '../components/Toast';
 const Poems = () => {
   const { user } = useAuth();
   const { addToast } = useToast();
+  const [searchParams] = useSearchParams();
   const [poems, setPoems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [selectedPoem, setSelectedPoem] = useState(null);
   const [loading, setLoading] = useState(true);
-  
+
   // Review states
   const [reviews, setReviews] = useState([]);
   const [userReview, setUserReview] = useState(null);
@@ -22,7 +24,9 @@ const Poems = () => {
   const [submitting, setSubmitting] = useState(false);
   const [showAddPoemModal, setShowAddPoemModal] = useState(false);
   const [myPoems, setMyPoems] = useState([]);
-  const [showMyPoems, setShowMyPoems] = useState(false);
+  // Honor ?view=mine deep-link from Profile so the page opens directly on
+  // the user's own poems tab.
+  const [showMyPoems, setShowMyPoems] = useState(searchParams.get('view') === 'mine');
 
   // Static genres - same as AddUserPoemModal
   const staticGenres = [
@@ -392,33 +396,39 @@ const Poems = () => {
         </div>
       </div>
 
-      {/* My Poems Section */}
-      {myPoems.length > 0 && (
-        <div className="mb-6 sm:mb-8">
-          <button
-            onClick={() => {
-              setShowMyPoems(!showMyPoems);
-              setSelectedCategory(null);
-            }}
-            className="w-full bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="w-10 h-10 sm:w-14 sm:h-14 bg-primary rounded-full flex items-center justify-center text-xl sm:text-2xl">
-                  ✍️
-                </div>
-                <div className="text-left">
-                  <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">My Poems</h3>
-                  <p className="text-gray-600 text-xs sm:text-sm md:text-base">{myPoems.length} poems written by you</p>
-                </div>
+      {/* My Poems Section — always visible so users can find their authored poems */}
+      <div className="mb-6 sm:mb-8">
+        <button
+          onClick={() => {
+            if (myPoems.length === 0) {
+              setShowAddPoemModal(true);
+              return;
+            }
+            setShowMyPoems(!showMyPoems);
+            setSelectedCategory(null);
+          }}
+          className="w-full bg-white rounded-xl p-4 sm:p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-primary rounded-full flex items-center justify-center text-xl sm:text-2xl">
+                ✍️
               </div>
-              <span className="text-xl sm:text-2xl text-primary font-bold">
-                {showMyPoems ? '▼' : '▶'}
-              </span>
+              <div className="text-left">
+                <h3 className="text-base sm:text-lg md:text-xl font-bold text-primary">My Poems</h3>
+                <p className="text-gray-600 text-xs sm:text-sm md:text-base">
+                  {myPoems.length > 0
+                    ? `${myPoems.length} ${myPoems.length === 1 ? 'poem' : 'poems'} written by you`
+                    : "You haven't written any poems yet — click to start"}
+                </p>
+              </div>
             </div>
-          </button>
-        </div>
-      )}
+            <span className="text-xl sm:text-2xl text-primary font-bold">
+              {myPoems.length === 0 ? '+' : showMyPoems ? '▼' : '▶'}
+            </span>
+          </div>
+        </button>
+      </div>
 
       {/* Categories */}
       {!showMyPoems && (
@@ -505,7 +515,20 @@ const Poems = () => {
         {getFilteredPoems().length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 sm:py-20 bg-white rounded-xl border border-gray-100 shadow-sm">
             <div className="text-4xl sm:text-5xl md:text-6xl mb-4">📝</div>
-            <p className="text-gray-600 text-base sm:text-lg">कोई कविता नहीं मिली</p>
+            <p className="text-gray-600 text-base sm:text-lg mb-4">
+              {showMyPoems
+                ? "You haven't written any poems yet"
+                : 'कोई कविता नहीं मिली'}
+            </p>
+            {showMyPoems && (
+              <button
+                onClick={() => setShowAddPoemModal(true)}
+                className="flex items-center gap-2 bg-primary text-white font-semibold py-2.5 px-5 rounded-xl hover:bg-orange-600 transition-colors"
+              >
+                <FiEdit3 size={16} />
+                Write Your First Poem
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">

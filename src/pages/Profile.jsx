@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/Toast';
 import api, { uploadImage } from '../services/api';
-import { FiUser, FiMail, FiCamera, FiSave } from 'react-icons/fi';
+import { FiUser, FiMail, FiCamera, FiSave, FiEdit3, FiChevronRight } from 'react-icons/fi';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -144,6 +145,22 @@ const Profile = () => {
               </p>
             </div>
           )}
+
+          {/* My Poems link — discoverability so users can find content they
+              authored without scrolling the full /poems feed. */}
+          <Link
+            to="/poems?view=mine"
+            className="flex items-center gap-3 sm:gap-4 bg-white border border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:bg-orange-50 hover:border-primary transition-colors"
+          >
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+              <FiEdit3 className="text-white" size={18} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm sm:text-base font-bold text-gray-800">My Poems</p>
+              <p className="text-xs sm:text-sm text-gray-600">View &amp; manage poems you have written</p>
+            </div>
+            <FiChevronRight className="text-primary flex-shrink-0" size={20} />
+          </Link>
 
           {/* Submit Button */}
           <button
